@@ -16,13 +16,6 @@ SetWorkingDir %A_ScriptDir%
 	\hotstrings til sektioner
 	Hotstrings til diverse tekst shortcuts
 	
-	*todo*
-	FIND UD AF ^ Uden at remmape en knap til når det skal offenliggøres.
-	Find ud af de forskellige subsets, måske menu?
-	!w=wolfaflpha markeret tekst?
-	Gør så selector i pastemenu ikke starter i 2.
-	fiks vindue fokus paste rigtig sted 
-	fiks matrix menu control enter tingeling. 
 	
 	Links til diverse unicode symboler
 	https://www.compart.com/en/unicode/block/U+2200		;matematisk univode block
