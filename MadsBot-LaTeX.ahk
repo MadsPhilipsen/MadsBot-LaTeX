@@ -34,13 +34,11 @@ SetWorkingDir %A_ScriptDir%
 	implementer \underset{1}{1} og \overset{}{}
 */
 
-;å::\ ;send, \	;+
-
 ;højre shift højre kontrol til at togle makroerne til go fra
 >^>+esc::msgbox, % "Madsbot LaTeX blocker is now set to " . Madsbot_LaTeX_blocker:=!Madsbot_LaTeX_blocker	;udtrykket er negeret af ahk jank grunde
 #if !Madsbot_LaTeX_blocker	;hvis ikke blockeren er slået til,
 
-^å::send, \	;control å til \
+^å::\	;control å til \
 
 ;right control sektionen. >+ betyder højre shift, <+ betyder venstre shift
 ;Højre shift er default, venstre shift er en modification.
