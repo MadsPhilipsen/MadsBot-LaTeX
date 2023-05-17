@@ -1,0 +1,5 @@
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{Navn? KUID?}
+\rhead{\today}
+\cfoot{\thepage}
