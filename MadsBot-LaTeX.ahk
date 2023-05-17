@@ -1,4 +1,4 @@
-#NoEnv  
+﻿#NoEnv  
 #Singleinstance Force	;force skips dialog box and replaces old instance
 SetWorkingDir %A_ScriptDir%
 #InputLevel 10			;super vigigt. Gør at ^å som mapper til \ kan aktivere andre makroer
