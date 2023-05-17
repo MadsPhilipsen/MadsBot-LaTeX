@@ -1,9 +1,9 @@
-﻿#NoEnv  
+#NoEnv  
 #Singleinstance Force	;force skips dialog box and replaces old instance
 SetWorkingDir %A_ScriptDir%
+#InputLevel 10			;super vigigt. Gør at ^å som mapper til \ kan aktivere andre makroer
 
-
-/*	Madsbot LaTeX
+/*	Madsbot LaTeX af Mads Philipsen
 	
 	Altgr=græske bogstaver
 	Altgr+shift=store græske bogstaver
@@ -16,6 +16,14 @@ SetWorkingDir %A_ScriptDir%
 	\hotstrings til sektioner
 	Hotstrings til diverse tekst shortcuts
 	
+	*todo*
+	FIND UD AF ^ Uden at remmape en knap til når det skal offenliggøres.
+	Find ud af de forskellige subsets, måske menu?
+	!w=wolfaflpha markeret tekst?
+	Gør så selector i pastemenu ikke starter i 2.
+	fiks vindue fokus paste rigtig sted 
+	fiks matrix menu control enter tingeling. 
+	Fiks at Menupaste nogle gange gemmer i flere slots, hvis den gør det
 	
 	Links til diverse unicode symboler
 	https://www.compart.com/en/unicode/block/U+2200		;matematisk univode block
@@ -23,14 +31,16 @@ SetWorkingDir %A_ScriptDir%
 	https://en.wikipedia.org/wiki/Mathematical_operators_and_symbols_in_Unicode
 	https://milde.users.sourceforge.net/LUCR/Math/unimathsymbols.pdf	(pdf med latex symboler)
 	
-	
-	⊥ vinkelret
+	implementer \underset{1}{1} og \overset{}{}
 */
+
+;å::\ ;send, \	;+
 
 ;højre shift højre kontrol til at togle makroerne til go fra
 >^>+esc::msgbox, % "Madsbot LaTeX blocker is now set to " . Madsbot_LaTeX_blocker:=!Madsbot_LaTeX_blocker	;udtrykket er negeret af ahk jank grunde
 #if !Madsbot_LaTeX_blocker	;hvis ikke blockeren er slået til,
 
+^å::send, \	;control å til \
 
 ;right control sektionen. >+ betyder højre shift, <+ betyder venstre shift
 ;Højre shift er default, venstre shift er en modification.
@@ -43,6 +53,7 @@ SetWorkingDir %A_ScriptDir%
 >^>+p::∈	;part
 >^<+p::∉	;notpart
 >^>+v::∀	;alkvantoren
+>^<+v::⊥	;vinkelret
 >^>+e::∃	;eksistenskvantoren
 >^<+e::∄	;eksistenskvantoren med streg ingennem
 >^>+x::×	;kryds
@@ -153,8 +164,6 @@ SetWorkingDir %A_ScriptDir%
 :*?:>/=::≱ 	;ikke større eller lig end
 :*?:=ish::≈
 :*?:/=::≠ 	;er efter ulighederne der også bruger /=, for at de også virker
-<^>!<::{
-<^>!-::}   
 :*?:~=::≃			;isomorf, altså tilde ligmed. 
 :*?:sinx::sin(x)
 :*?:siny::sin(y)
@@ -194,8 +203,10 @@ SetWorkingDir %A_ScriptDir%
 ;Andre hotstrings
 :*?X:\unicode::run, www.compart.com/en/unicode/block/U+2200
 :*?X:\latexunicode::run, https://milde.users.sourceforge.net/LUCR/Math/unimathsymbols.pdf
-:*?:\inddeling::$D:\ a=x_0<x_1<...<x_n=b$¬
-:*?:\tjek::✓
+:*?X:\help::run, "https://github.com/MadsPhilipsen/MadsBot-LaTeX/blob/main/MadsBot-LaTeX.ahk"
+:*?X:\hjælp::run, "https://github.com/MadsPhilipsen/MadsBot-LaTeX/blob/main/MadsBot-LaTeX.ahk"
+:*?X:\kode::run, notepad.exe %A_ScriptDir%/MadsBot-LaTeX.ahk
+:*?:\inddeling::$D:\ a=x_0<x_1<...<x_n=b$
 ;Paste fra filer hotstrings, til at paste meget
 :*?X:\skabalon::PasteFromTxtFile("Data\LaTeX_skabalon.txt")
 :*?X:\forside::PasteFromTxtFile("Data\LaTeX_forside.txt")
@@ -320,19 +331,6 @@ for char, v in list {
 paste(text)
 return
 
-;+^æ UP::		;control shift m til at lave dollartegn omkring det markerede
-;pasteAroundSelected("$", "$")
-;return
-;keywait, m
-;clipSaved := ClipboardAll	;for restating it later
-;clipText := Clipboard		;for testing if it maches
-;send, ^c
-;sleep, 50 
-;paste("$" . clipboard . "$")
-;sleep, 50
-;clipboard := clipSaved
-;clipSaved := ""
-;return
 
 !m::	;Matrix makroen!
 if WinExist("Madsbot: Madstrix") {			;Hvis allerede åben
@@ -664,6 +662,10 @@ upload := StrReplace(MatrixInput, A_Space, "Æ")
 upload := StrReplace(upload, "`n", "→")
 if !FileExist("Data\savedata.ini")	{		; findes fill ikke
 	msgbox, Der findes ikke en Data\savedata.ini i scriptets mappe. Lav den venligst så matricerne automatisk gemmes.
+}
+if instr(upload, "|") {
+	msgbox, Der er | i din matrix, hvilket ødelægger alt. Derfor gemmes den ikke :(
+	return
 }
 iniwrite, %upload%, Data\savedata.ini, matrix, % MatrixSaveSlot
 return
