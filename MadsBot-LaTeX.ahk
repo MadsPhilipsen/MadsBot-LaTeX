@@ -24,6 +24,13 @@ SetWorkingDir %A_ScriptDir%
 	fiks vindue fokus paste rigtig sted 
 	fiks matrix menu control enter tingeling. 
 	Fiks at Menupaste nogle gange gemmer i flere slots, hvis den gør det
+	implementer \underset{1}{1} og \overset{}{}
+	Lav matrix parenteser med \begin{matrix} 
+	Lav general funktion til at vise forskellige symboler 
+	Gør så at man kan have flere af samme pastemenu åben
+	Lav icon til MadsBot LaTeX
+	gør så | virker i menupaste og matrix?
+	
 	
 	Links til diverse unicode symboler
 	https://www.compart.com/en/unicode/block/U+2200		;matematisk univode block
@@ -31,7 +38,6 @@ SetWorkingDir %A_ScriptDir%
 	https://en.wikipedia.org/wiki/Mathematical_operators_and_symbols_in_Unicode
 	https://milde.users.sourceforge.net/LUCR/Math/unimathsymbols.pdf	(pdf med latex symboler)
 	
-	implementer \underset{1}{1} og \overset{}{}
 */
 
 ;højre shift højre kontrol til at togle makroerne til go fra
@@ -212,10 +218,11 @@ SetWorkingDir %A_ScriptDir%
 
 ;Alt laget. Alt knappen er bundet til mere komplekse makroer. 
 ;"Simple" alt makroer, der kun kræver en linje kode
+<!w::run, www.wolframalpha.com
 <!s::MenuPaste("Sum fra [1] til [2] over [3]", "∑_{【1】}^{【2】}{【3】}", "sum")		;alt s = sum
 <^<!s::paste("∑_{i=1}^{n}{}", "{left 1}")	;venstre kontrol alt s = sum med i=1 til n
 <+<!s::paste("∑_{n=1}^{∞}{}", "{left 1}")	;venstre plus alt s = sum med n=1 til ∞
-<!d::MenuPaste("Brøk: [1]/[2]", "\frac{【1】}{【2】}", "brøkker")	;alt d = brøk menu
+<!d::MenuPaste("Brøk: [1] divideret med [2]", "\frac{【1】}{【2】}", "brøkker")	;alt d = brøk menu
 <!<^d::paste("\frac{}{}", "{left 3}")		;kontrol alt d = brøk
 <!<+d::pasteAroundSelected("\frac{", "}{}", "{left}")
 <!i::MenuPaste("Integral fra [1] til [2] af [3]", "∫_{【1】}^{【2】}{【3】}", "integral")
@@ -266,10 +273,9 @@ SetWorkingDir %A_ScriptDir%
 <^space::send, {end}{space}				;mellemrum til sidst i linjen
 ;enters i LaTeX
 <^>!enter::paste("\\","{enter}")			;Ordenligt nylinje i latex
-<^enter::send, {end}{enter}				;Forlad linje
 <^>!>^enter::send, {end}\\{enter}			;Forlad linje med \\
 ;andet
-<^>!.::send, {end}.\\{enter}	;punktum til sidst på linje, ny linje
+<^>!.::send, {end}.\\{enter}	;punktum til sids<t på linje, ny linje
 
 
 ;venstre alt venstre kontrol + tal til headings
@@ -329,31 +335,41 @@ for char, v in list {
 paste(text)
 return
 
-
 !m::	;Matrix makroen!
 if WinExist("Madsbot: Madstrix") {			;Hvis allerede åben
 	if !winactive("Madsbot: Madstrix")		;Hvis ikke aktive vindue
 		WinActivate, Madsbot: Madstrix	;fokuser på vindue
 	return							;Lav værd med at lave ny (kan chrashe)
 }
-rows := 7
 gui, MatrixMaker:new, +ToolWindow, Madsbot: Madstrix	;always on top
 gui, MatrixMaker:Default
 gui, font, s20
-gui, show, xcenter ycenter w600 h256
-gui, add, Edit, x0 y0 w300 r%rows% vMatrixInput
+gui, show, xcenter ycenter w600 h278
 matricer := ""
-Loop, %rows% {
+Loop, 9 {
 	iniread, download, Data\savedata.ini, matrix, %A_Index%
 	matrix := StrReplace(download, "Æ", " ")
 	matricer .= matrix . "|"				;skift den her ud med et andet bogstav når den gemmes?‽‽‽‽‽!
 	NumberOfMatrices := A_Index
-}
-StringTrimRight, matricer, matricer, 1	;fjerner sidste |
-gui, add, Listbox, x300 y0 w300 r7 vMatrixSelector gMatrixChangeInput, %matricer%
-gui, add, button, x0 y216 w300 h40 vMatrixButton GCreateMatrix, Insert Matrix
-Gui, Add, ComboBox, x300 y220 w64 h32 vMatrixSaveSlot Choose1, 1|2|3|4|5|6|7
-Gui, Add, DropDownList, x364 y220 w128 h32 vMatrixPasteMode Choose1, PMatrix|LaTexArray|Maple|Wolfα
+}  	StringTrimRight, matricer, matricer, 1	;fjerner sidste |
+matrixformats := [new MatrixFormat("( )", "\begin{pmatrix}`n", "&", "\\`n", "`n\end{pmatrix}")
+, new MatrixFormat("[ ]", "\begin{bmatrix}`n", "&", "\\`n", "`n\end{bmatrix}")
+, new MatrixFormat("{ }", "\begin{Bmatrix}`n", "&", "\\`n", "`n\end{Bmatrix}")
+, new MatrixFormat("ǀ ǀ", "\begin{vmatrix}`n", "&", "\\`n", "`n\end{vmatrix}")
+, new MatrixFormat("‖ ‖", "\begin{Vmatrix}`n", "&", "\\`n", "`n\end{Vmatrix}")
+, new MatrixFormat("Ø", "\begin{matrix}`n", "&", "\\`n", "n\end{Vmatrix}")
+, new MatrixFormat("ary", "\left(\begin{array}{}`n", "&", "\\`n", "\end{array}\right)")
+, new MatrixFormat("wα", "{{" , "," , "},{", "}}")
+, new MatrixFormat(chr(127809), "<<", "|", ">,<", ">>")]	;chr(127809) er symbolet for et maple leaf. Det rå unicode symbol chrashede min IDE
+pasteModes := ""
+for i, m in matrixformats {
+	pasteModes .= m.name . "|"
+}	StringTrimRight, matricer, matricer, 1	;fjerner sidste | i pastemodes
+gui, add, Edit, x0 y0 w300 h244 vMatrixInput
+gui, add, listbox, x300 y0 w260 r9 vMatrixSelector gMatrixChangeInput, %matricer%
+gui, add, listbox, x560 y0 w40 r9 vMatrixPasteMode Choose1, %pasteModes%
+gui, add, button, x0 y244 w234 h36 vMatrixButton GCreateMatrix, Insert Matrix
+gui, add, comboBox, x234 y244 w64 h32 vMatrixSaveSlot Choose1, 1|2|3|4|5|6|7|8|9
 hotkey, IfWinActive, Madsbot: Madstrix			;gør knapper kun virker hvis vindue aktivt
 hotkey, ^enter, CreateMatrix, on
 hotkey, escape, ExitMatrixMaker, on
@@ -361,7 +377,6 @@ hotkey ^up, MatrixIncreaseSaveSlot, On
 hotkey, ^down, MatrixDecreaseSaveSlot, on
 guicontrol, Focus, MatrixInput
 return
-
 
 paste(text, send := "") {	; has a second optional argument for any text to send. 
 	sleep, 100
@@ -495,163 +510,47 @@ MenuPaste(titel, text, savesektion:="") {
 	ControlSend, ListBox1, {up}, ahk_id %gui%	;send pil op til listbox kontrollen i gui
 }
 
-
-formatMatrix(input, mode:="LaTex") {
-	if (mode == "PMatrix")
-		return, formatPMatrix(input)
-	if (mode == "LaTexArray") 
-		return, formatMatrixLaTexArray(input)
-	if (mode == "Maple")
-		return, formatMatrixMaple(input)
-	list1 := StrSplit(input, "`n")	;enter
-	c := ""
-	loops := 0
-	text := ""	;vigtigt for at restete. For text er ikke en lokal variabel, af en eller anden grund
-	for i, str in list1 {
-		c1 := ""
-		list2 := StrSplit(str, A_Space)
-		if (mode == "Wolfα")
-			text .= "{"
-		if (mode == "Maple" )
-			text .= "<"
-		for j, v in list2 {
-			if (mode == "LaTex") {
-				text .= v . "&"
-				c1 .= "c"
-			} else if (mode == "Maple") {
-				text .= v . "|"
-			} else if (mode == "Wolfα") {
-				text .= v . ","
-			}
-		}
-		StringTrimRight, text, text, 1
-		if (mode == "LaTex") {
-			text .= "\\"
-		} else if (mode == "Wolfα") {
-			text .= "},"
-		} else if (mode == "Maple") {
-			text .= ">,"
-		}
-		if (StrLen(c1)>StrLen(c))
-			c := c1
-		loops++
+Class MatrixFormat {
+	__New(name, before, spaceSeperator, enterSeperator, after)
+	{
+		this.name := name
+		this.before := before
+		this.spaceSeperator := spaceSeperator
+		this.enterSeperator := enterSeperator
+		this.after := after
 	}
-	if (mode == "Wolfα" or mode == "Maple") { ; Fjerner ekstra komma når den slutter
-		StringTrimRight, text, text, 1	
-	} if (loops = 1) {
-		text := ""
-		list2 := StrSplit(input, " ")
-		for i, v in list2
-			text .= v . "\\"
-		c := "c"
-	}
-	if (mode == "LaTex")
-		return, "\left(\begin{array}{" . c . "}" . text . "\end{array}\right)"
-	else if (mode == "Maple")
-		return, "<" . text . ">"
-	else if (mode == "Wolfα")
-		return, "{" . text . "}" 
-	else 
-		return
 }
 
-
-formatPMatrix(input) {
-	list1 := StrSplit(input, "`n")	;enter
-	text := ""	;vigtigt for at restete. For text er ikke en lokal variabel, af en eller anden grund
-	for i, str in list1 {
-		list2 := StrSplit(str, A_Space)
-		for j, v in list2 {
-			if (inStr(v, "/"))
-				text .= formatBrøk(v) . "&"
-			else
-				text .= v . "&"
+formatMatrix(input, before, spaceSeperator, enterSeperator, after) {
+	text := ""
+	list1 := StrSplit(input, "`n")			;enter
+	for i, str in list1 {					;for hver linje
+		list2 := StrSplit(str, A_Space)		;space
+		for j, v in list2 {					;for hver element i linje
+			if (A_Index != list2.length())	;hvis ikke sidste element i linjen
+				text .= v . spaceSeperator	;tilføj element og spaceseperatoren
+			else							;hvis sidste elemnt i linjen
+				text .= v					;tilføj kun elementet
 		}
-		StringTrimRight, text, text, 1
-		text .= "\\`n"
+		if (A_Index != list1.length())		;hvis det ikke er den sidste linje
+			text .= enterSeperator			;tilføj enterseperatoren
 	}
-	return, "\begin{pmatrix}`n" . text . "\end{pmatrix}"
+	return, before . text . after
 }
-
-formatVMatrix(input) {
-	list1 := StrSplit(input, "`n")	;enter
-	text := ""	;vigtigt for at restete. For text er ikke en lokal variabel, af en eller anden grund
-	for i, str in list1 {
-		list2 := StrSplit(str, A_Space)
-		for j, v in list2 {
-			if (inStr(v, "/"))
-				text .= formatBrøk(v) . "&"
-			else
-				text .= v . "&"
-		}
-		StringTrimRight, text, text, 1
-		text .= "\\`n"
-	}
-	return, "\begin{vmatrix}`n" . text . "\end{vmatrix}"
-}
-
-
-formatMatrixLaTexArray(input) {
-	list1 := StrSplit(input, "`n")	;enter
-	c := ""
-	text := ""	;vigtigt for at restete. For text er ikke en lokal variabel, af en eller anden grund
-	for i, str in list1 {
-		c1 := ""
-		list2 := StrSplit(str, A_Space)
-		for j, v in list2 {
-			if (inStr(v, "/"))
-				text .= formatBrøk(v) . "&"
-			else
-				text .= v . "&"
-			c1 .= "c"
-		}
-		StringTrimRight, text, text, 1
-		text .= "\\"
-		if (StrLen(c1)>StrLen(c))
-			c := c1
-	}
-	return, "\left(\begin{array}{" . c . "}" . text . "\end{array}\right)"
-}
-
-formatMatrixMaple(input) {	;det her format Matrix(2, 2, [[m[1, 1], m[1, 2]], [m[2, 1], m[2, 2]]])
-	list1 := StrSplit(input, "`n")	;enter
-	text := ""	;vigtigt for at restete. For text er ikke en lokal variabel, af en eller anden grund
-	for i, str in list1 {
-		list2 := StrSplit(str, A_Space)
-		for j, v in list2 {
-			if (inStr(v, "/"))
-				text .= formatBrøk(v) . "&"
-			else
-				text .= v . "&"
-		}
-		StringTrimRight, text, text, 1
-		text .= "\\`n"
-	}
-	return, "\begin{pmatrix}`n" . text . "\end{pmatrix}"
-	
-}
-
-formatBrøk(input, mode:="LaTex") {
-	list := StrSplit(input, "/")
-	if (list.length() = 2) {
-		return, "\frac{" . list[1] . "}{" . list[2] . "}"
-	}
-	return, input
-	
-		;needle := "O\(([^()]*)\)"	;O makes it return a matchobject. 
-		;needle := "O)\(([^()]*)\)"	;O makes it return a matchobject. 
-		;pos := RegExMatch(input, needle, list)
-		;msgbox, % list[1]
-}
-
 
 return				;matrix  subrutiner
 CreateMatrix:
 Gui, MatrixMaker:Default	
 Gui, Submit, nohide		;store gui data to variables
 gui, Destroy			;close gui
-result := formatMatrix(MatrixInput, MatrixPasteMode)
-paste(result)
+for i, m in matrixFormats {			;looper igennem matricer
+	if (m.name == MatrixPasteMode) 	;matcher matrice pastemodeformatet
+		format := m				;gem den matrice som format
+}
+if format							;hvis et format blev fundet, send matricen
+	paste(formatMatrix(MatrixInput, format.before, format.spaceSeperator, format.enterSeperator, format.after))
+else								;hvis et format ikke blev fundet, send en error message.
+	msgbox, Noget gik galt. Kunne ikke finde en matrix∈matrixformats der matchede MatrixPasteMode. Hvis du ser denne besked så send mig lige en besked ik?
 hotkey, ^enter, off
 hotkey, escape, off
 hotkey, ^up, off
@@ -689,7 +588,7 @@ return
 MatrixDecreaseSaveSlot:
 Gui, MatrixMaker:Default
 Gui, Submit, nohide
-slot := % mod(MatrixSaveSlot - 2,rows)+1
+slot := % mod(MatrixSaveSlot - 2,9)+1
 Guicontrol, Choose, MatrixSaveSlot, %slot%
 return
 #if
