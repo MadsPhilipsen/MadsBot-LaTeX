@@ -20,17 +20,11 @@ SetWorkingDir %A_ScriptDir%
 	FIND UD AF ^ Uden at remmape en knap til når det skal offenliggøres.
 	Find ud af de forskellige subsets, måske menu?
 	!w=wolfaflpha markeret tekst?
-	Gør så selector i pastemenu ikke starter i 2.
 	fiks vindue fokus paste rigtig sted 
-	fiks matrix menu control enter tingeling. 
-	Fiks at Menupaste nogle gange gemmer i flere slots, hvis den gør det
 	implementer \underset{1}{1} og \overset{}{}
-	Lav matrix parenteser med \begin{matrix} 
 	Lav general funktion til at vise forskellige symboler 
 	Gør så at man kan have flere af samme pastemenu åben
 	Lav icon til MadsBot LaTeX
-	gør så | virker i menupaste og matrix?
-	
 	
 	Links til diverse unicode symboler
 	https://www.compart.com/en/unicode/block/U+2200		;matematisk univode block
@@ -43,7 +37,7 @@ SetWorkingDir %A_ScriptDir%
 ;højre shift højre kontrol til at togle makroerne til go fra
 >^>+esc::msgbox, % "Madsbot LaTeX blocker is now set to " . Madsbot_LaTeX_blocker:=!Madsbot_LaTeX_blocker	;udtrykket er negeret af ahk jank grunde
 #if !Madsbot_LaTeX_blocker	;hvis ikke blockeren er slået til,
-
+	
 ^å::\	;control å til \
 
 ;right control sektionen. >+ betyder højre shift, <+ betyder venstre shift
@@ -335,23 +329,12 @@ for char, v in list {
 paste(text)
 return
 
-!m::	;Matrix makroen!
+<!m::	;Matrix makroen! Det er ikke en funktion af *banker hovedet i bordet* "årsager"
 if WinExist("Madsbot: Madstrix") {			;Hvis allerede åben
 	if !winactive("Madsbot: Madstrix")		;Hvis ikke aktive vindue
 		WinActivate, Madsbot: Madstrix	;fokuser på vindue
 	return							;Lav værd med at lave ny (kan chrashe)
 }
-gui, MatrixMaker:new, +ToolWindow, Madsbot: Madstrix	;always on top
-gui, MatrixMaker:Default
-gui, font, s20
-gui, show, xcenter ycenter w600 h278
-matricer := ""
-Loop, 9 {
-	iniread, download, Data\savedata.ini, matrix, %A_Index%
-	matrix := StrReplace(download, "Æ", " ")
-	matricer .= matrix . "|"				;skift den her ud med et andet bogstav når den gemmes?‽‽‽‽‽!
-	NumberOfMatrices := A_Index
-}  	StringTrimRight, matricer, matricer, 1	;fjerner sidste |
 matrixformats := [new MatrixFormat("( )", "\begin{pmatrix}`n", "&", "\\`n", "`n\end{pmatrix}")
 , new MatrixFormat("[ ]", "\begin{bmatrix}`n", "&", "\\`n", "`n\end{bmatrix}")
 , new MatrixFormat("{ }", "\begin{Bmatrix}`n", "&", "\\`n", "`n\end{Bmatrix}")
@@ -361,20 +344,48 @@ matrixformats := [new MatrixFormat("( )", "\begin{pmatrix}`n", "&", "\\`n", "`n\
 , new MatrixFormat("ary", "\left(\begin{array}{}`n", "&", "\\`n", "\end{array}\right)")
 , new MatrixFormat("wα", "{{" , "," , "},{", "}}")
 , new MatrixFormat(chr(127809), "<<", "|", ">,<", ">>")]	;chr(127809) er symbolet for et maple leaf. Det rå unicode symbol chrashede min IDE
+matrixformats_n := matrixformats.length()
+matrixinputrows := matrixformats.length()-1.25
 pasteModes := ""
 for i, m in matrixformats {
 	pasteModes .= m.name . "|"
-}	StringTrimRight, matricer, matricer, 1	;fjerner sidste | i pastemodes
-gui, add, Edit, x0 y0 w300 h244 vMatrixInput
-gui, add, listbox, x300 y0 w260 r9 vMatrixSelector gMatrixChangeInput, %matricer%
-gui, add, listbox, x560 y0 w40 r9 vMatrixPasteMode Choose1, %pasteModes%
-gui, add, button, x0 y244 w234 h36 vMatrixButton GCreateMatrix, Insert Matrix
-gui, add, comboBox, x234 y244 w64 h32 vMatrixSaveSlot Choose1, 1|2|3|4|5|6|7|8|9
+}	StringTrimRight, pasteModes, pasteModes, 1	;fjerner sidste | i pastemodes
+matricer := ""
+Loop, %matrixformats_n% {
+	iniread, download, Data\savedata.ini, matrix, %A_Index%
+	matrix := StrReplace(download, "Æ", " ")
+	matricer .= matrix . "|"				;skift den her ud med et andet bogstav når den gemmes?‽‽‽‽‽!
+	NumberOfMatrices := A_Index
+}  	StringTrimRight, matricer, matricer, 1	;fjerner sidste |
+iniread, defaultFormat, Data\savedata.ini, matrix, LastFormat
+if (defaultFormat<1 or defaultFormat>matrixformats.length())	;hvis der gik noget galt i at loade default format
+	defaultFormat := 1									;sæt det til 1.
+
+gui_height := matrixformats_n*30+8
+gui, MatrixMaker:new, +HwndGuiHwnd +ToolWindow, Madsbot: Madstrix	;always on top
+gui, MatrixMaker:Default
+gui, font, s20
+gui, show, xcenter ycenter w600 h%gui_height%
+gui, add, Edit, x0 y0 w300 r%matrixinputrows% vMatrixInput
+gui, add, button, x0 y+0 wp-40 h36 vMatrixButton gCreateMatrix, Insert Matrix
+gui, add, comboBox, x+0 yp w40 h32 vMatrixSaveSlot Choose1, 1|2|3|4|5|6|7|8|9
+gui, add, listbox, x300 y0 w260 r%matrixformats_n% vMatrixSelector gMatrixChangeInput, %matricer%
+gui, add, listbox, x560 y0 w40 r%matrixformats_n% vMatrixPasteMode Choose%defaultFormat%, %pasteModes%
+funcObject1 := func("MatrixLoadNext").bind(GuiHwnd)
+funcObject2 := func("MatrixLoadPrevios").bind(GuiHwnd)
+funcObject3 := func("MatrixNextFormat").bind(GuiHwnd)	;referance til select nedad i ListBox
+funcObject4 := func("MatrixPreviousFormat").bind(GuiHwnd)		;referance til select opad i listbox
 hotkey, IfWinActive, Madsbot: Madstrix			;gør knapper kun virker hvis vindue aktivt
 hotkey, ^enter, CreateMatrix, on
 hotkey, escape, ExitMatrixMaker, on
-hotkey ^up, MatrixIncreaseSaveSlot, On
-hotkey, ^down, MatrixDecreaseSaveSlot, on
+hotkey, ^down, % funcObject1, on
+hotkey ^up, % funcObject2, On
+hotkey, ^right, % funcObject3, On
+hotkey, ^left, % funcObject4, On
+loop, % min(9, matrixformats_n) {	;looper igennem hver gemt matrix. Højst til 9, da der er ni talknapper på tastaturet
+	funcObject := func("MatrixSetSaveSlot").bind(A_index, GuiHwnd)
+	hotkey, ^%A_index%, % funcObject, on
+}
 guicontrol, Focus, MatrixInput
 return
 
@@ -457,7 +468,7 @@ MenuPaste(titel, text, savesektion:="") {
 		gemt .= download . "|"
 	}
 	StringTrimRight, gemt, gemt, 1	;fjerner sidste | som splitter dem op
-	gui, add, Listbox, x0 y54 w256 r%slots% vGemtSelector ReadOnly Choose2, %gemt%	;laver listboksen med gamle inputs
+	gui, add, Listbox, x0 y54 w256 r%slots% vGemtSelector ReadOnly, %gemt%	;laver listboksen med gamle inputs
 	UpdateField := func("MenuPasteUpdateField").bind(GuiHwnd)		;laver funktionsrefereance til opdater field
 	Guicontrol, +g, GemtSelector, % UpdateField					;binder funktions referance til listboksen
 	
@@ -487,10 +498,11 @@ MenuPaste(titel, text, savesektion:="") {
 	text := RegExReplace(text, "【(.*?)*】",, -1)		;fjerner ekstra 【n】 som ikke blev udfyldt, hvis de findes
 	paste(text)
 	if savesektion {				;hvis savesektion er angviet, så skal det gemmes
+		sanitiezedInput := StrReplace(Input, "|", "｜") 						;| ødelægger *ting* så udskiftes med en lidt anden vertical linje
 		iniread, previous, Data\savedata.ini, %savesektion%, %previousslot%			;hvad var sidste gemt
-		if (Input != previous) {												;hvis input ikke allerede er gemt, så gem
+		if (sanitiezedInput != previous) {												;hvis input ikke allerede er gemt, så gem
 			iniwrite, %saveslot%, Data\savedata.ini, %savesektion%, currentSaveSlot	;gemmer saveslot til næste gang
-			iniwrite, %Input%, Data\savedata.ini, %savesektion%, %saveslot%			;gemmer inputtet i saveslot
+			iniwrite, %sanitiezedInput%, Data\savedata.ini, %savesektion%, %saveslot%			;gemmer inputtet i saveslot
 		}
 	}
 } MenuPasteExit(gui) {
@@ -503,7 +515,8 @@ MenuPaste(titel, text, savesektion:="") {
 } MenuPasteUpdateField(gui) {
 	global GemtSelector			;Gør den kan hente inputtet i tekstboksen
 	gui, %gui%:submit, nohide	;gemmer indenhold i input variablen
-	guicontrol, %gui%:text, Input, %GemtSelector%
+	unsanitiezedInput := StrReplace(GemtSelector, "｜", "|")	;Inputter var gemt med "|" ændret til "｜" da |  bruges til ting i ahk. Det ændres tilbage
+	guicontrol, %gui%:text, Input, %unsanitiezedInput%
 } MenuPasteSelectDown(gui) {
 	ControlSend, ListBox1, {down}, ahk_id %gui%	;send pil ned til listbox kontrollen i gui
 } MenuPasteSelectUp(gui) {
@@ -545,26 +558,26 @@ Gui, Submit, nohide		;store gui data to variables
 gui, Destroy			;close gui
 for i, m in matrixFormats {			;looper igennem matricer
 	if (m.name == MatrixPasteMode) 	;matcher matrice pastemodeformatet
-		format := m				;gem den matrice som format
+		format := m, format_n := i	;gem formatet og formattallet
 }
 if format							;hvis et format blev fundet, send matricen
 	paste(formatMatrix(MatrixInput, format.before, format.spaceSeperator, format.enterSeperator, format.after))
 else								;hvis et format ikke blev fundet, send en error message.
 	msgbox, Noget gik galt. Kunne ikke finde en matrix∈matrixformats der matchede MatrixPasteMode. Hvis du ser denne besked så send mig lige en besked ik?
-hotkey, ^enter, off
-hotkey, escape, off
-hotkey, ^up, off
-hotkey, ^down, off
+MatrixDisableHotkeys()
 upload := StrReplace(MatrixInput, A_Space, "Æ")
 upload := StrReplace(upload, "`n", "→")
 if !FileExist("Data\savedata.ini")	{		; findes fill ikke
 	msgbox, Der findes ikke en Data\savedata.ini i scriptets mappe. Lav den venligst så matricerne automatisk gemmes.
 }
 if instr(upload, "|") {
-	msgbox, Der er | i din matrix, hvilket ødelægger alt. Derfor gemmes den ikke :(
+	msgbox, Der er | i din matrix, hvilket ødelægger alt. Det er besværligt at fikse, derfor gemmes den ikke :(
+	
 	return
 }
+;sanitiezedUpload := StrReplace(upload, "|", "｜") 		;| ødelægger *ting* så udskiftes med en lidt anden vertical linje
 iniwrite, %upload%, Data\savedata.ini, matrix, % MatrixSaveSlot
+iniwrite, %format_n%, Data\savedata.ini, matrix, LastFormat
 return
 MatrixChangeInput:
 Gui, MatrixMaker:Default
@@ -573,22 +586,28 @@ matrix := StrReplace(MatrixSelector, "→", "`n")
 guicontrol, text, MatrixInput, %matrix%
 return
 ExitMatrixMaker:
-hotkey, ^enter, off		;disables hotkey
-hotkey, escape, off
-hotkey, ^up, off
-hotkey, ^down, off
+MatrixDisableHotkeys()
 gui, MatrixMaker:cancel			;close gui
 return
-MatrixIncreaseSaveSlot:
-Gui, MatrixMaker:Default
-Gui, Submit, nohide
-slot := % MatrixSaveSlot + 1
-Guicontrol, Choose, MatrixSaveSlot, %slot%
-return
-MatrixDecreaseSaveSlot:
-Gui, MatrixMaker:Default
-Gui, Submit, nohide
-slot := % mod(MatrixSaveSlot - 2,9)+1
-Guicontrol, Choose, MatrixSaveSlot, %slot%
-return
+MatrixDisableHotkeys() {
+	hotkey, ^enter, off		;disables hotkey
+	hotkey, escape, off		
+	hotkey, ^up, off
+	hotkey, ^down, off
+	loop, 9 {						;looper igennem alle 9 talknapper på tastaturet
+		try, hotkey, ^%A_index%, off	;disables hotkey. Try for hvis der er mindre end 9 saveslots
+	}
+} MatrixSetSaveSlot(slot, gui) {
+	Gui, %gui%:Submit, nohide
+	Guicontrol, %gui%:Choose, MatrixSaveSlot, %slot%	;vælg slot
+} MatrixLoadNext(gui) {
+	ControlSend, ListBox1, {down}, ahk_id %gui%	;send pil ned til listbox kontrollen i gui
+} MatrixLoadPrevios(gui) {
+	ControlSend, ListBox1, {up}, ahk_id %gui%	;send pil ned til listbox kontrollen i gui
+}
+MatrixNextFormat(gui) {
+	ControlSend, ListBox2, {down}, ahk_id %gui%	;send pil ned til listbox kontrollen i gui
+} MatrixPreviousFormat(gui) {
+	ControlSend, ListBox2, {up}, ahk_id %gui%	;send pil op til listbox kontrollen i gui
+}
 #if
