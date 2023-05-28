@@ -31,13 +31,15 @@ SetWorkingDir %A_ScriptDir%
 	http://xahlee.info/comp/unicode_arrows.html
 	https://en.wikipedia.org/wiki/Mathematical_operators_and_symbols_in_Unicode
 	https://milde.users.sourceforge.net/LUCR/Math/unimathsymbols.pdf	(pdf med latex symboler)
-	
+	https://www.classe.cornell.edu/~dms79/LectureNotes/formulae/list-of-math-symbols-extended.htm'
+	http://xahlee.info/comp/unicode_math_operators.html
+	https://symbl.cc/en/collections/mathematical-signs/
 */
 
 ;højre shift højre kontrol til at togle makroerne til go fra
 >^>+esc::msgbox, % "Madsbot LaTeX blocker is now set to " . Madsbot_LaTeX_blocker:=!Madsbot_LaTeX_blocker	;udtrykket er negeret af ahk jank grunde
 #if !Madsbot_LaTeX_blocker	;hvis ikke blockeren er slået til,
-	
+
 ^å::\	;control å til \
 
 ;right control sektionen. >+ betyder højre shift, <+ betyder venstre shift
@@ -49,26 +51,42 @@ SetWorkingDir %A_ScriptDir%
 >^>+c::ℂ	;komplekse tal symbolet
 >^>+-::∖	;differens mængde
 >^>+p::∈	;part
->^<+p::∉	;notpart
+;>^<+p::∉	;notpart
+>^<+p::SelectionMenu(["∈","∉","∋","∌","∊","∍"], "Part menu")
 >^>+v::∀	;alkvantoren
 >^<+v::⊥	;vinkelret
 >^>+e::∃	;eksistenskvantoren
->^<+e::∄	;eksistenskvantoren med streg ingennem
+>^<+e::SelectionMenu(["∃","∀","∄"], "Kvator menu")
+;>^<+e::∄	;eksistenskvantoren med streg ingennem
 >^>+x::×	;kryds
 >^>+s::⊆	;delmængde (subset)
->^<+s::⊇	;delmængde den anden vej
+>^<+s::SelectionMenu(["⊂","⊃","⊆","⊇","⊄","⊅","⊈","⊉", "⊊", "⊋", "⋐","⋑"], "Delmængde menu")	;delmængde menu
 >^>+i::∫	;integral symbol
+>^<+i::SelectionMenu(["∫","∬","∭","⨌","∮","∯","∰","⨍","⨎","⨏","⨐","∱","⨑","∲","∳","⨒","⨓","⨔","⨕","⨖","⨗","⨘","⨙","⨚","⨛","⨜","⨋","⌠","⌡"], "Integral menu")
 >^>+f::¬	;not 
 >^>+k::∘	;sammensat funrktion 	(k for kombineret)
->^>+m::⟼	;funktions mappe pil
+;>^>+m::⟼	;funktions mappe pil
 >^>+u::⊢	;underordnet symbol
 >^>+d::∂	;blødt d
+>^>+l::ℓ	;matematik l
 >^>+8::∞	;uendelig
->^<+8::paste("n→∞")
 >^>+g::∇	;nabla 				(g for gradient)
 >^>+t::✓	;tjekmark
 >^>+h::̂ 	;hat over bogstav
 >^>+b::̅ 	;bar over bogstav
+;>^>+ø::∅	;tomme mængde
+>^<+0::SelectionMenu(["=","≠","∼","∽","≈","≂","≃","⋍","≄","≅","≌","≆","≇","≉","≊","≋","≍","≎","≏","≐","≑","≒","≓","≔","≕","≖","≗","≙","≚","≜","≟","≡","≢","≭","⋕"], "Ligmed menu")
+
+>^<+1::SelectionMenu(["|","∣","⟊","∤","⫮","∥","∦","⫲","⫳","⋕","⫽","⦀","⫵","⫻"], "lodrette streger")
+>^<+2::SelectionMenu(["^","⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹","⁺","⁻","⁼","⁽","⁾","√","∛","∜"],"Potenser menu")
+>^<+m::SelectionMenu(["⟹","⟸","⟺","⟾","⟽","⇒","⇐","⇑","⇓","⇔","⇕","⇏","⇍","⇎","⤂","⤃","⤄","⤇","⤆","⇗","⇘","⇙","⇖","⇛","⇚","⤊","⤋","⭆","⭅","⟰","⟱"], "Medføre pile")
+>^<+8::SelectionMenu(["(","[","{","⌈","⌊","⟨"], "Start parenteser")
+>^<+9::SelectionMenu([")","]","}","⌉","⌋","⟩"], "Slut parenteser")
+>^<++::SelectionMenu(["+","±","∓","⩱","⩲","∑","⨊","⨁","⊞","⨹","⧺","⧻"], "Plus menu")
+>^<+.::SelectionMenu(["⋅","⋮","⋯","⋰","⋱","∴","∵","∶","∷","⦁","●"], "Prikker")
+>^<+o::SelectionMenu(["○","◌","⊕","⊖","⊗","⊘","⊙","⊚","⊛","⊝","◍","◎","⌀","ø","∅","◦","°","○"],"Cirkel symboler")
+;>^<+<::SelectionMenu(["<",">","≤","≥","≦","≧","≨","≩","≪","≫","≮","≯","≰","≱","≲","≳","≴","≵","≶","≷","≸","≹","≺","≻","≼","≽","≾","≿","⊀","⊁","⊰","⋖","⋗","⋘","⋙","⋚","⋛","⋞","⋟","⋠","⋡","⋦","⋧","⋨","⋩"], "Uligheder")
+>^<+<::SelectionMenu(["≤","≥","≦","≧","≨","≩","≪","≫","≮","≯","≰","≱","≲","≳","≴","≵","≶","≷","≸","≹","≺","≻","≼","≽","≾","≿","⊀","⊁","⊰","⋖","⋗","⋘","⋙","⋚","⋛","⋞","⋟","⋠","⋡","⋦","⋧","⋨","⋩"], "Uligheder")
 
 ;----- Pile taster -----
 ;altgr+pile taster = impliaktions pile. Højre og venstre shift giver modifikationer
@@ -141,7 +159,7 @@ SetWorkingDir %A_ScriptDir%
 +<^>!n::Ν ;Ny
 +<^>!x::Ξ ;Xi
 +<^>!o::Ο ;Omikron
-+<^>!p::π ;Pi
++<^>!p::Π ;Pi
 +<^>!r::Ρ ;Rho
 +<^>!s::∑ ;Sigma
 +<^>!u::Τ ;Tau
@@ -203,7 +221,7 @@ SetWorkingDir %A_ScriptDir%
 :*?X:\latexunicode::run, https://milde.users.sourceforge.net/LUCR/Math/unimathsymbols.pdf
 :*?X:\help::run, "https://github.com/MadsPhilipsen/MadsBot-LaTeX/blob/main/MadsBot-LaTeX.ahk"
 :*?X:\hjælp::run, "https://github.com/MadsPhilipsen/MadsBot-LaTeX/blob/main/MadsBot-LaTeX.ahk"
-:*?X:\kode::run, notepad.exe %A_ScriptDir%/MadsBot-LaTeX.ahk
+:*?X:\kode::run, notepad.exe %A_ScriptDir%/%A_ScriptName%
 :*?:\inddeling::$D:\ a=x_0<x_1<...<x_n=b$
 ;Paste fra filer hotstrings, til at paste meget
 :*?X:\skabalon::PasteFromTxtFile("Data\LaTeX_skabalon.txt")
@@ -215,13 +233,13 @@ SetWorkingDir %A_ScriptDir%
 <!w::run, www.wolframalpha.com
 <!s::MenuPaste("Sum fra [1] til [2] over [3]", "∑_{【1】}^{【2】}{【3】}", "sum")		;alt s = sum
 <^<!s::paste("∑_{i=1}^{n}{}", "{left 1}")	;venstre kontrol alt s = sum med i=1 til n
-<+<!s::paste("∑_{n=1}^{∞}{}", "{left 1}")	;venstre plus alt s = sum med n=1 til ∞
+<+<!s::paste("∑_{n=0}^{∞}{}", "{left 1}")	;venstre plus alt s = sum med n=1 til ∞
 <!d::MenuPaste("Brøk: [1] divideret med [2]", "\frac{【1】}{【2】}", "brøkker")	;alt d = brøk menu
 <!<^d::paste("\frac{}{}", "{left 3}")		;kontrol alt d = brøk
 <!<+d::pasteAroundSelected("\frac{", "}{}", "{left}")
 <!i::MenuPaste("Integral fra [1] til [2] af [3]", "∫_{【1】}^{【2】}{【3】}", "integral")
 <^<!i::paste("∫_{a}^{b}{}", "{left 1}")		;kontrol alt i = integral fra a til b
-<!u::MenuPaste("Løsning af integral: [[3]]_[1]^[2]", "[【3】]_{【1】}^{【2】}", "integralløsning")
+;<!u::MenuPaste("Løsning af integral: [[3]]_[1]^[2]", "[【3】]_{【1】}^{【2】}", "integralløsning")
 <!l::MenuPaste("Grænseværdi for [1] gående mod [2] af [3]", "\lim_{【1】→【2】}{【3】}", "grænseværdi")
 <^<!l::paste("\lim_{n→∞}{}", "{left}")		;kontrol alt l = limit
 <!p::MenuPaste("Partielt afledt: Funktion=[1], variabel=[2]", "\frac{∂【1】}{∂【2】}", "partieltAfledt")
@@ -229,9 +247,13 @@ SetWorkingDir %A_ScriptDir%
 <!k::menupaste("konjuger [1]", "\overline{【1】}", "konjugeret")		;alt k = konjugeret
 <!h::menupaste("hat over [1]", "\widehat{【1】}", "hat")
 <!<+h::pasteAroundSelected("\widehat{","}")
-<!o::menupaste("[2] over [1]", "\stackrel{\text{【2】}}{【1】}", "over")	;tekst over tekst
+;<!o::menupaste("[2] over [1]", "\stackrel{\text{【2】}}{【1】}", "over")	;tekst over tekst
+<!o::menupaste("[2] over [1]", "\overset{【2】}{【1】}", "over")
 <!<+o::menupaste("over markeret", "\stackrel{\text{【1】}}{" . getSelected() . "}")
-<!r::menupaste("[1] som tekst", "\ \text{【1】}\ ", "text")	;tekst over tekst
+<!u::menupaste("[2] under [1]", "\underset{【2】}{【1】}", "under")
+<!r::menupaste("[1] som tekst", "\text{【1】}", "text")	;tekst over tekst
+<!<+r::pasteAroundSelected("\text{", "}")
+<!<^r::paste("\text{}", "{left 1}")	
 <!f::menupaste("Følgens navn: [1] i indekset [2] som ligger i [3]", "\{【1】_{【2】}\}_{【2】∈【3】}", "følger")	;alt f = m
 <!v::menupaste("Vector pil over [1]", "\vec{【1】}", "vectorpil")
 <!<+v::pasteAroundSelected("\vec{","}")
@@ -243,6 +265,7 @@ SetWorkingDir %A_ScriptDir%
 <!<::paste("⌊⌋", "{left}")				;gulv
 <!<+<::paste("⌈⌉", "{left}")				;lfot
 <!c::paste("\begin{cases}\end{cases}", "{left 11}{enter 2}{left}")
+<!<+c::pasteAroundSelected("\begin{cases}","\end{cases}")
 <!1::paste("^{-1}") 					;alt 1 = invers
 <!<+1::pasteAroundSelected("\frac{1}{","}")
 <!2::paste("\sqrt{}", "{left}")			;alt 2 = √
@@ -252,6 +275,7 @@ SetWorkingDir %A_ScriptDir%
 <!æ::paste("$")							;alt æ til ligning i linje (virker i overleaf)
 <!ø::paste("$$", "{left}")					;alt ø til ligning i linje (virker i obsidian)
 <!'::paste("\begin{align}\end{align}", "{left 11}{enter 2}{left}")	;alt ' til align ligning
+<!<+'::pasteAroundSelected("\begin{align}","\end{align}")
 <^>!ø::send, {end}{enter}$$$${left 2}	;til programmer der ikke automatisk sætter to $
 <^>!æ::send, {end}{enter}$$			;til programmer der automatisk sætter to $
 +^æ::pasteAroundSelected("$", "$")		;sætter $ omkring markeret
@@ -367,7 +391,8 @@ gui, MatrixMaker:Default
 gui, font, s20
 gui, show, xcenter ycenter w600 h%gui_height%
 gui, add, Edit, x0 y0 w300 r%matrixinputrows% vMatrixInput
-gui, add, button, x0 y+0 wp-40 h36 vMatrixButton gCreateMatrix, Insert Matrix
+gui, add, button, x0 y+0 wp-108 h36 vMatrixButton gCreateMatrix, Insert Matrix
+gui, add, button, x+0 yp w68 h36 vMatrixHelpButton gMatrixHelp, Help
 gui, add, comboBox, x+0 yp w40 h32 vMatrixSaveSlot Choose1, 1|2|3|4|5|6|7|8|9
 gui, add, listbox, x300 y0 w260 r%matrixformats_n% vMatrixSelector gMatrixChangeInput, %matricer%
 gui, add, listbox, x560 y0 w40 r%matrixformats_n% vMatrixPasteMode Choose%defaultFormat%, %pasteModes%
@@ -523,6 +548,44 @@ MenuPaste(titel, text, savesektion:="") {
 	ControlSend, ListBox1, {up}, ahk_id %gui%	;send pil op til listbox kontrollen i gui
 }
 
+SelectionMenu(list, titel) {
+	gui, new, +HwndGuiHwnd +AlwaysOnTop +ToolWindow, %titel%	;laver gui	+Hwnd laver guis HWND til handle
+	gui, %GuiHwnd%:Default				;sætter til default for thread
+	gui, margin, 0, 0
+	hotkey, IfWinActive, %titel%			;gør knapper kun virker hvis vindue aktivt
+	escapeObject := func("CloseSelectionMenu").bind(GuiHwnd, keymap)
+	hotkey, escape, % escapeObject, on		;escape til at lukke vindue.
+	keymap := {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9", 10: "0", 11: "+", 12: "q", 13: "w", 14: "e", 15: "r", 16: "t", 17: "y", 18: "u"
+	, 19: "i", 20: "o", 21: "p", 22: "å", 23: "a", 24: "s", 25: "d", 26: "f", 27: "g", 28: "h", 29: "j", 30: "k", 31: "l", 32: "æ", 33: "ø", 34: "<", 35: "z", 36: "x"
+	, 37: "c", 38: "v", 39: "b", 40: "n", 41: "m", 42: ",", 43: "."}
+	for i, text in list {
+		gui, font, s16
+		gui, add, button, x+0 y0 h32, %text%
+		gui, font, s12
+		gui, add, text, xp y32 wp h32 center, % keymap[i]
+		funcObject := func("SelectionMenuPaste").bind(GuiHwnd, text, keymap)
+		guicontrol +g, %text%, % funcObject
+		hotkey, % keymap[i], % funcObject, on
+	}
+	helpObjet := func("SelectionMenuHelp")
+	gui, add, button, x+0 y0 w50 h32, help
+	guicontrol +g, help, % helpObjet
+	gui, show, xcenter ycenter h54	;Viser vindue
+} SelectionMenuPaste(gui, text, keymap) {
+	CloseSelectionMenu(gui, keymap)
+	paste(text)
+} CloseSelectionMenu(gui, keymap) {
+	gui, %gui%:cancel		;close gui
+	for i, key in keymap
+		try, hotkey, %key%, off
+	;loop listlength
+		;try, hotkey %A_index%, off
+} SelectionMenuHelp() {
+	msgbox, Vælg teksten der skal sendes ved at klikke på knappen eller dens korsponderende tast på tastaturet som står neden under.
+}
+
+;gui, add, button, x0 y+0 wp-40 h36 vMatrixButton gCreateMatrix, Insert Matrix
+
 Class MatrixFormat {
 	__New(name, before, spaceSeperator, enterSeperator, after)
 	{
@@ -589,11 +652,23 @@ ExitMatrixMaker:
 MatrixDisableHotkeys()
 gui, MatrixMaker:cancel			;close gui
 return
+MatrixHelp:
+msgbox,, MatrixHelp, 
+(
+Skriv matricen ved at sepererer med mellemrum og nyline (enter), som f.eks:
+1 2
+3 4
+Kontrol+enter for at gemme matricen, lukke viduet og paste matricen.
+Kontrol+pilop/pilned for at loade gamle matricer. 
+Kontrol+venstre/højrepil for at vælge matrix formateringen.
+Kontrol+tallet for linjen hvor matricen skal gemmes.
+)
+return
 MatrixDisableHotkeys() {
-	hotkey, ^enter, off		;disables hotkey
-	hotkey, escape, off		
-	hotkey, ^up, off
-	hotkey, ^down, off
+	try, hotkey, ^enter, off		;disables hotkey
+	try, hotkey, escape, off		;try for at undgå en errormessage en mærkelig gang
+	try, hotkey, ^up, off
+	try, hotkey, ^down, off
 	loop, 9 {						;looper igennem alle 9 talknapper på tastaturet
 		try, hotkey, ^%A_index%, off	;disables hotkey. Try for hvis der er mindre end 9 saveslots
 	}
@@ -604,8 +679,7 @@ MatrixDisableHotkeys() {
 	ControlSend, ListBox1, {down}, ahk_id %gui%	;send pil ned til listbox kontrollen i gui
 } MatrixLoadPrevios(gui) {
 	ControlSend, ListBox1, {up}, ahk_id %gui%	;send pil ned til listbox kontrollen i gui
-}
-MatrixNextFormat(gui) {
+} MatrixNextFormat(gui) {
 	ControlSend, ListBox2, {down}, ahk_id %gui%	;send pil ned til listbox kontrollen i gui
 } MatrixPreviousFormat(gui) {
 	ControlSend, ListBox2, {up}, ahk_id %gui%	;send pil op til listbox kontrollen i gui
