@@ -13,7 +13,12 @@ Makroerne kører i forskellige "lag" i tastaturet, der hver svarer til en kombin
 >
 >højrekontrol+piletaster (evt + højre eller venstreshift)=pile og pile agtige symboler
 >
->Alt=komplicerede makroer der paster tekststrenge og eller åbner menuer 
+>Alt=komplicerede makroer der arbejder på samme bogstav
+>>Alt=åben menu
+>>
+>>Venstre kontrol alt=Send rå tekst uden menu
+>>
+>>Venstre shift alt: Send tekst omkring markeret tekst
 >
 >Bonus:
 >
