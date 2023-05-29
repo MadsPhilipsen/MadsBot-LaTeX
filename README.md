@@ -7,7 +7,7 @@ Makroerne kører i forskellige "lag" i tastaturet, der hver svarer til en kombin
 >
 >Altgr+piletaster (evt + højre eller venstreshift)=medførepile
 >
->højrekontrol+højreshift=matematik symboler
+>højrekontrol+højreshift=matematik symboler (nogle gange menuer med mange symboler)
 >
 >højrekontrol+venstreshift=alternative matematiksymboler (inklusiv nogle menuer)
 >
