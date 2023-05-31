@@ -15,93 +15,79 @@ SetWorkingDir %A_ScriptDir%
 	Bonus:
 	\hotstrings til sektioner
 	Hotstrings til diverse tekst shortcuts
-	
-	*todo*
-	FIND UD AF ^ Uden at remmape en knap til når det skal offenliggøres.
-	Find ud af de forskellige subsets, måske menu?
-	!w=wolfaflpha markeret tekst?
-	fiks vindue fokus paste rigtig sted 
-	implementer \underset{1}{1} og \overset{}{}
-	Lav general funktion til at vise forskellige symboler 
-	Gør så at man kan have flere af samme pastemenu åben
-	Lav icon til MadsBot LaTeX
-	
-	Links til diverse unicode symboler
-	https://www.compart.com/en/unicode/block/U+2200		;matematisk univode block
-	http://xahlee.info/comp/unicode_arrows.html
-	https://en.wikipedia.org/wiki/Mathematical_operators_and_symbols_in_Unicode
-	https://milde.users.sourceforge.net/LUCR/Math/unimathsymbols.pdf	(pdf med latex symboler)
-	https://www.classe.cornell.edu/~dms79/LectureNotes/formulae/list-of-math-symbols-extended.htm'
-	http://xahlee.info/comp/unicode_math_operators.html
-	https://symbl.cc/en/collections/mathematical-signs/
 */
 
 ;højre shift højre kontrol til at togle makroerne til go fra
 >^>+esc::msgbox, % "Madsbot LaTeX blocker is now set to " . Madsbot_LaTeX_blocker:=!Madsbot_LaTeX_blocker	;udtrykket er negeret af ahk jank grunde
 #if !Madsbot_LaTeX_blocker	;hvis ikke blockeren er slået til,
 
-^å::\	;control å til \
+^å::\	;control å til \ for at kunne aktivere \ makroerne hurtigt
 
+;----- Symbol laget -----
 ;right control sektionen. >+ betyder højre shift, <+ betyder venstre shift
 ;Højre shift er default, venstre shift er en modification.
 >^>+r::ℝ	;real tal symbolet
+>^<+r::SelectionMenu(["ℝ","ℝ^2","ℝ^3","ℝ^4","ℝ^5","ℝ^6","ℝ^7","ℝ^8","ℝ^9","ℝ_-","ℝ_+","ℝ\backslash\{0\}","ℝ^n"], "Reele tal variationer")
 >^>+q::ℚ	;rationelle tal symbolet
 >^>+z::ℤ	;hele tal symbolet
 >^>+n::ℕ	;naturlige tal symbolet
+>^<+n::send, ℕ_0
 >^>+c::ℂ	;komplekse tal symbolet
->^>+-::∖	;differens mængde
+>^<+c::SelectionMenu(["sin(","cos(","tan(","arcsin(","arccos(","arctan(","cosh(","sinh(","tanh(","arsinh(","arcosh(","artanh("], "trigonometriske funktioner")
 >^>+p::∈	;part
-;>^<+p::∉	;notpart
->^<+p::SelectionMenu(["∈","∉","∋","∌","∊","∍"], "Part menu")
+>^<+p::SelectionMenu(["∈","∉","∋","∌","∊","∍"], "Part symboler")
 >^>+v::∀	;alkvantoren
->^<+v::⊥	;vinkelret
+>^<+v::SelectionMenu(["⊥","⊢","⊣","⊤"], "Vinkel symboler")
 >^>+e::∃	;eksistenskvantoren
->^<+e::SelectionMenu(["∃","∀","∄"], "Kvator menu")
-;>^<+e::∄	;eksistenskvantoren med streg ingennem
+>^<+e::SelectionMenu(["∃","∀","∄"], "Kvator symboler")
 >^>+x::×	;kryds
+>^<+x::SelectionMenu(["⋅","×","÷","∏","⊗"], "Gange symboler")
 >^>+s::⊆	;delmængde (subset)
->^<+s::SelectionMenu(["⊂","⊃","⊆","⊇","⊄","⊅","⊈","⊉", "⊊", "⊋", "⋐","⋑"], "Delmængde menu")	;delmængde menu
+>^<+s::SelectionMenu(["⊂","⊃","⊆","⊇","⊄","⊅","⊈","⊉", "⊊", "⊋", "⋐","⋑"], "Delmængde symboler")	;delmængde menu
 >^>+i::∫	;integral symbol
->^<+i::SelectionMenu(["∫","∬","∭","⨌","∮","∯","∰","⨍","⨎","⨏","⨐","∱","⨑","∲","∳","⨒","⨓","⨔","⨕","⨖","⨗","⨘","⨙","⨚","⨛","⨜","⨋","⌠","⌡"], "Integral menu")
+>^<+i::SelectionMenu(["∫","∬","∭","⨌","∮","∯","∰","⨍","⨎","⨏","⨐","∱","⨑","∲","∳","⨒","⨓","⨔","⨕","⨖","⨗","⨘","⨙","⨚","⨛","⨜","⨋","⌠","⌡"], "Integral symboler")
 >^>+f::¬	;not 
 >^>+k::∘	;sammensat funrktion 	(k for kombineret)
-;>^>+m::⟼	;funktions mappe pil
->^>+u::⊢	;underordnet symbol
 >^>+d::∂	;blødt d
 >^>+l::ℓ	;matematik l
 >^>+8::∞	;uendelig
+>^<+u::SelectionMenu(["∞","⧜","⧝","⧞","♾","ℵ"], "Den uendelige liste")
 >^>+g::∇	;nabla 				(g for gradient)
->^>+t::✓	;tjekmark
+>^>+t::paste("\{\}", "{left 2}")
+>^<+t::✓	;tjekmark
 >^>+h::̂ 	;hat over bogstav
 >^>+b::̅ 	;bar over bogstav
+>^>+o::⊗	;cirkel med kryds
+>^<+o::SelectionMenu(["⊕","⊖","⊗","⊘","⊙","⊚","⊛","⊝","○","◌","◍","◎","◉","⨶","⨷","⨸","⌀","ø","∅","◦","°","○"],"Cirkel symboler")
 ;>^>+ø::∅	;tomme mængde
->^<+0::SelectionMenu(["=","≠","∼","∽","≈","≂","≃","⋍","≄","≅","≌","≆","≇","≉","≊","≋","≍","≎","≏","≐","≑","≒","≓","≔","≕","≖","≗","≙","≚","≜","≟","≡","≢","≭","⋕"], "Ligmed menu")
-
+>^<+m::SelectionMenu(["⟹","⟸","⟺","⟾","⟽","⇒","⇐","⇑","⇓","⇔","⇕","⇏","⇍","⇎","⤂","⤃","⤄","⤇","⤆","⇗","⇘","⇙","⇖","⇛","⇚","⤊","⤋","⭆","⭅","⟰","⟱"], "Medføre pile")
+>^<+<::SelectionMenu(["≤","≥","≦","≧","≨","≩","≪","≫","≮","≯","≰","≱","≲","≳","≴","≵","≶","≷","≸","≹","≺","≻","≼","≽","≾","≿","⊀","⊁","⊰","⋖","⋗","⋘","⋙","⋚","⋛","⋞","⋟","⋠","⋡","⋦","⋧","⋨","⋩"], "Uligheds symboler")
 >^<+1::SelectionMenu(["|","∣","⟊","∤","⫮","∥","∦","⫲","⫳","⋕","⫽","⦀","⫵","⫻"], "lodrette streger")
 >^<+2::SelectionMenu(["^","⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹","⁺","⁻","⁼","⁽","⁾","√","∛","∜"],"Potenser menu")
->^<+m::SelectionMenu(["⟹","⟸","⟺","⟾","⟽","⇒","⇐","⇑","⇓","⇔","⇕","⇏","⇍","⇎","⤂","⤃","⤄","⤇","⤆","⇗","⇘","⇙","⇖","⇛","⇚","⤊","⤋","⭆","⭅","⟰","⟱"], "Medføre pile")
->^<+8::SelectionMenu(["(","[","{","⌈","⌊","⟨"], "Start parenteser")
->^<+9::SelectionMenu([")","]","}","⌉","⌋","⟩"], "Slut parenteser")
->^<++::SelectionMenu(["+","±","∓","⩱","⩲","∑","⨊","⨁","⊞","⨹","⧺","⧻"], "Plus menu")
->^<+.::SelectionMenu(["⋅","⋮","⋯","⋰","⋱","∴","∵","∶","∷","⦁","●"], "Prikker")
->^<+o::SelectionMenu(["○","◌","⊕","⊖","⊗","⊘","⊙","⊚","⊛","⊝","◍","◎","⌀","ø","∅","◦","°","○"],"Cirkel symboler")
-;>^<+<::SelectionMenu(["<",">","≤","≥","≦","≧","≨","≩","≪","≫","≮","≯","≰","≱","≲","≳","≴","≵","≶","≷","≸","≹","≺","≻","≼","≽","≾","≿","⊀","⊁","⊰","⋖","⋗","⋘","⋙","⋚","⋛","⋞","⋟","⋠","⋡","⋦","⋧","⋨","⋩"], "Uligheder")
->^<+<::SelectionMenu(["≤","≥","≦","≧","≨","≩","≪","≫","≮","≯","≰","≱","≲","≳","≴","≵","≶","≷","≸","≹","≺","≻","≼","≽","≾","≿","⊀","⊁","⊰","⋖","⋗","⋘","⋙","⋚","⋛","⋞","⋟","⋠","⋡","⋦","⋧","⋨","⋩"], "Uligheder")
+>^<+7::SelectionMenu(["()","[]","{}","⌊⌋","⌈⌉","⟨⟩"], "Parantes sæt")
+>^<+8::SelectionMenu(["(","[","{","⌊","⌈","⟨"], "Start parenteser")
+>^<+9::SelectionMenu([")","]","}","⌋","⌉","⟩"], "Slut parenteser")
+>^<+0::SelectionMenu(["=","≠","∼","∽","≈","≂","≃","⋍","≄","≅","≌","≆","≇","≉","≊","≋","≍","≎","≏","≐","≑","≒","≓","≔","≕","≖","≗","≙","≚","≜","≟","≡","≢","≭","⋕"], "Ligmed symboler")
+>^<++::SelectionMenu(["+","±","∓","⩱","⩲","∑","⨊","⨋","⨁","⊞","⨹","⧺","⧻","⎲","⎳"], "Plus menu")
+>^<+.::SelectionMenu(["⋯","⋱","⋮","⋰","⋅","∶","∴","∵","∷","⦁","●"], "Prikker")
+
+
 
 ;----- Pile taster -----
 ;altgr+pile taster = impliaktions pile. Højre og venstre shift giver modifikationer
 <^>!right::⟹ 		;lang højre implikation
 <^>!left::⟸ 		;lang venstre implikation
 <^>!up::⟺ 		;lang biimplikation
-<^>!down::⇔ 		;kort biimplikation
-<^>!>+right::⇒		;kort højre implikaiton
-<^>!>+left::⇐		;kort venstre implikaiton
-<^>!>+up::⇑		;kort opad implikaiton
-<^>!>+down::⇓		;kort nedad implikaiton
-<^>!<+right::⇏		;kort højre ikke implikaiton
-<^>!<+left::⇍		;kort venstre ikke implikaiton
-<^>!<+up::⇎		;kort ikke biimplikaiton
-<^>!<+down::⇕		;kort opad biimplikaiton
+<^>!down::⇏		;Ikke implikation
+;<^>!down::⇔ 		;kort biimplikation
+;<^>!>+right::⇒		;kort højre implikaiton
+;<^>!>+left::⇐		;kort venstre implikaiton
+;<^>!>+up::⇑		;kort opad implikaiton
+;<^>!>+down::⇓		;kort nedad implikaiton
+;<^>!<+right::⇏		;kort højre ikke implikaiton
+;<^>!<+left::⇍		;kort venstre ikke implikaiton
+;<^>!<+up::⇎		;kort ikke biimplikaiton
+;<^>!<+down::⇕		;kort opad biimplikaiton
 ;rightcontrol med højre/venstreshift piletaster
 >^>+right::→		;højre pil
 >^>+left::←		;venstrepil
@@ -117,6 +103,7 @@ SetWorkingDir %A_ScriptDir%
 <+>+up::∩			;fællesmængde
 <+>+down::∪		;foreningsmængde
 
+;----- Græsk laget -----
 ;græske obstaver med altgr. Shift til store græske bogstaver. 
 <^>!a::α ;Alpha
 <^>!b::β ;Beta
@@ -143,6 +130,7 @@ SetWorkingDir %A_ScriptDir%
 <^>!c::χ ;Chi
 <^>!w::ω ;Omega
 <^>!v::ψ ;Psi
+;--- Store græske bogstaver ---
 +<^>!a::Α ;Alpha
 +<^>!b::Β ;Beta
 +<^>!g::Γ ;Gamma
@@ -169,9 +157,12 @@ SetWorkingDir %A_ScriptDir%
 +<^>!w::Ω ;Omega
 +<^>!v::Ψ ;Psi 
 
+;----- hotstrings -----
 ;Diverse matematiske hotstrings. 
 :*?:<=::≤
 :*?:=<::≤
+;:*?::=::≔
+;:*?:=:::≕
 :*?:>=::≥
 :*?:=>::≥
 :*?:/<::≮		;ikke mindre end
@@ -204,19 +195,13 @@ SetWorkingDir %A_ScriptDir%
 :*?:logn::log(n)
 :*?:fx::f(x)
 :*?:gx::g(x)
-;<^>!ø::send, ⋅		;fancy gangetegn (altså en prik)
-;<^>!æ::send, ⋅		;fancy gangetegn (altså en prik)
 ^ø::send, ⋅		;fancy gangetegn (altså en prik)
 ^æ::send, ⋅		;fancy gangetegn (altså en prik)
 :*?:...1::⋯		;middle line 3 dots
 :*?:...2::⋱		;diagonal 3 dots
 :*?:...3::⋮		;vertical 3 dots
 :*?:→/::↛			;højre pil med skæv streg igennem
-:*?x:\gulv::paste("⌊⌋", "{left}")
-:*?x:\loft::paste("⌈⌉", "{left}")
-:*?x:\vinkelret::paste("⊥")
-:*?x:\symbols::msgbox, ⊢⊣⊤⊥ ⊂⊃⊆⊇⊄⊅⊈⊉⋐⋑		;tacks, subsets,
-;Andre hotstrings
+;--- Hotstrings med \ der kalder diverse funktioner---
 :*?X:\unicode::run, www.compart.com/en/unicode/block/U+2200
 :*?X:\latexunicode::run, https://milde.users.sourceforge.net/LUCR/Math/unimathsymbols.pdf
 :*?X:\help::run, "https://github.com/MadsPhilipsen/MadsBot-LaTeX/blob/main/MadsBot-LaTeX.ahk"
@@ -228,50 +213,80 @@ SetWorkingDir %A_ScriptDir%
 :*?X:\forside::PasteFromTxtFile("Data\LaTeX_forside.txt")
 :*?X:\footer::PasteFromTxtFile("Data\LaTeX_footer.txt")
 
-;Alt laget. Alt knappen er bundet til mere komplekse makroer. 
-;"Simple" alt makroer, der kun kræver en linje kode
-<!w::run, www.wolframalpha.com
-<!s::MenuPaste("Sum fra [1] til [2] over [3]", "∑_{【1】}^{【2】}{【3】}", "sum")		;alt s = sum
-<^<!s::paste("∑_{i=1}^{n}{}", "{left 1}")	;venstre kontrol alt s = sum med i=1 til n
-<+<!s::paste("∑_{n=0}^{∞}{}", "{left 1}")	;venstre plus alt s = sum med n=1 til ∞
-<!d::MenuPaste("Brøk: [1] divideret med [2]", "\frac{【1】}{【2】}", "brøkker")	;alt d = brøk menu
-<!<^d::paste("\frac{}{}", "{left 3}")		;kontrol alt d = brøk
+;----- Alt laget -----
+;Alt knappen er bundet til mere komplekse makroer. En alt makro kan have et par varianter:
+;Alt: Default makro med menu
+;Venstre kontrol alt: Send rå tekst uden menu
+;Venstre shift alt: Send tekst omkring markeret tekst
+;- s = summer - 
+<^<!s::paste("∑_{i=1}^{n}{}", "{left 1}")	
+<!s::MenuPaste("Sum fra [1] til [2] over [3]", "∑_{【1】}^{【2】}{【3】}", "sum")		
+<+<!s::menuPaste("Sum fra [1] til [2] af markeret", "∑_{【1】}^{【2】}{" . getSelected() . "}")
+;- d = dividere -
+<!<^d::paste("\frac{}{}", "{left 3}")
+<!d::MenuPaste("Brøk: [1] divideret med [2]", "\frac{【1】}{【2】}", "brøkker")	
 <!<+d::pasteAroundSelected("\frac{", "}{}", "{left}")
+;- i = integraler -
+<^<!i::paste("∫_{a}^{b}{}", "{left 1}")
 <!i::MenuPaste("Integral fra [1] til [2] af [3]", "∫_{【1】}^{【2】}{【3】}", "integral")
-<^<!i::paste("∫_{a}^{b}{}", "{left 1}")		;kontrol alt i = integral fra a til b
-;<!u::MenuPaste("Løsning af integral: [[3]]_[1]^[2]", "[【3】]_{【1】}^{【2】}", "integralløsning")
+<+<!i::menuPaste("Integral fra [1] til [2] af markeret", "∫_{【1】}^{【2】}{" . getSelected() . "}")
+;- j = løsning af integral -
+<^<!j::paste("[]_{}^{}", "{left 7}")
+<!j::MenuPaste("Løsning af integral: [[3]]_[1]^[2]", "[【3】]_{【1】}^{【2】}", "integral")		;gemmer samme sted som integral, så de kan loades
+<+<!j::menuPaste("Løsning af integral: Markeret fra [1] til [2]", "[" . getSelected() . "]_{【1】}^{【2】}")
+;- l = limit -
+<^<!l::paste("\lim_{n→∞}{}", "{left}")
 <!l::MenuPaste("Grænseværdi for [1] gående mod [2] af [3]", "\lim_{【1】→【2】}{【3】}", "grænseværdi")
-<^<!l::paste("\lim_{n→∞}{}", "{left}")		;kontrol alt l = limit
+<+<!l::paste("Grænseværdi for [1] gående mod [2] af markeret", "\lim_{【1】→【2】}{" . getSelected() . "}")
 <!p::MenuPaste("Partielt afledt: Funktion=[1], variabel=[2]", "\frac{∂【1】}{∂【2】}", "partieltAfledt")
-;<!u::paste("⋃_{}^{}{}","{left 6}")			;alt u = fællesmængde med interval
-<!k::menupaste("konjuger [1]", "\overline{【1】}", "konjugeret")		;alt k = konjugeret
-<!h::menupaste("hat over [1]", "\widehat{【1】}", "hat")
-<!<+h::pasteAroundSelected("\widehat{","}")
-;<!o::menupaste("[2] over [1]", "\stackrel{\text{【2】}}{【1】}", "over")	;tekst over tekst
-<!o::menupaste("[2] over [1]", "\overset{【2】}{【1】}", "over")
-<!<+o::menupaste("over markeret", "\stackrel{\text{【1】}}{" . getSelected() . "}")
-<!u::menupaste("[2] under [1]", "\underset{【2】}{【1】}", "under")
-<!r::menupaste("[1] som tekst", "\text{【1】}", "text")	;tekst over tekst
-<!<+r::pasteAroundSelected("\text{", "}")
-<!<^r::paste("\text{}", "{left 1}")	
-<!f::menupaste("Følgens navn: [1] i indekset [2] som ligger i [3]", "\{【1】_{【2】}\}_{【2】∈【3】}", "følger")	;alt f = m
+;- k = konjuger -
+<^<!k::paste("\overline{}", "{left}")
+<!k::menupaste("konjuger [1]", "\overline{【1】}", "konjugeret")
+<+<!k::pasteAroundSelected("\overline{" , "}")
+;- v = vectorpil -
+<^<!v::paste("\vec{}", "{left}")
 <!v::menupaste("Vector pil over [1]", "\vec{【1】}", "vectorpil")
 <!<+v::pasteAroundSelected("\vec{","}")
-<!t::paste("\{\}", "{left 2}")			;alt t = tuborgparentesi\intt_t_{}^{}{}}}}}
->+-::paste("_{}","{left}")				;højreshift minus = subscrit med tuborg klap
-;+<!-pasteAroundSelected("_{","}")
+;- h = hat -
+<^<!h::paste("\widehat{}", "{left}")
+<!h::menupaste("hat over [1]", "\widehat{【1】}", "hat")
+<!<+h::pasteAroundSelected("\widehat{","}")
+;- o = tekst over -
+<^<!o::paste("\overset{}{}", "{left 3}")
+<!o::menupaste("[2] over [1]", "\overset{【2】}{【1】}", "over")
+<!<+o::menupaste("over markeret", "\overset{【1】}{" . getSelected() . "}")
+;- u = tekst under - 
+<^<!u::paste("\underset{}{}","{left 3}")
+<!u::menupaste("[2] under [1]", "\underset{【2】}{【1】}", "under")
+<+<!u::menupaste("over markeret", "\underset{【1】}{" . getSelected() . "}")	
+;- t = tekst -
+<^<!t::paste("\text{}", "{left}")
+<!t::menupaste("[1] som tekst", "\text{【1】}", "text")	;tekst over tekst
+<+<!t::pasteAroundSelected("\text{", "}")
+;- b = \mathbb -
+<^<!b::paste("\mathbb{}", "{left}")
+<!b::menupaste("[1] som mathbb tekst, f.eks ℝ", "\mathbb{【1】}", "mathbb")
+<+<!b::pasteAroundSelected("\mathbb{", "}")
+;- c = cases -
+<^<!c::paste("\begin{cases}\end{cases}", "{left 11}{enter 2}{left}")
+<!c::paste("\begin{cases}\end{cases}", "{left 11}{enter 2}{left}")
+<+<!c::selected := getSelected(), paste("\begin{cases}" . selected . "\end{cases}", "{left " . 11+StrLen(selected) . "}{enter}{right " . StrLen(selected) . "}\\{enter 2}{left}")
+
+;--- andet ---
+<!f::menupaste("Følgens navn: [1] i indekset [2] som ligger i [3]", "\{【1】_{【2】}\}_{【2】∈【3】}", "følger")	;alt f = m
 <!a::paste("^*")						;Adjungeret
-;<!<::paste("⟨⟩", "{left 1}")				;indre produkt
 <!<::paste("⌊⌋", "{left}")				;gulv
 <!<+<::paste("⌈⌉", "{left}")				;lfot
-<!c::paste("\begin{cases}\end{cases}", "{left 11}{enter 2}{left}")
-<!<+c::pasteAroundSelected("\begin{cases}","\end{cases}")
 <!1::paste("^{-1}") 					;alt 1 = invers
 <!<+1::pasteAroundSelected("\frac{1}{","}")
 <!2::paste("\sqrt{}", "{left}")			;alt 2 = √
 <!3::menupaste("[1]'te rod af [2]","\sqrt[【1】]{【2】}", "nroot")			;alt 3 = n rod, hvor jeg kan ændre n. 
 <!0::paste("\{0\}")						;alt 0 = singleton 0
-;matematik felter
+;<!u::paste("⋃_{}^{}{}","{left 6}")			;alt u = fællesmængde med interval
+
+
+;----- Navigation -----
+;--- start matematik felter ---
 <!æ::paste("$")							;alt æ til ligning i linje (virker i overleaf)
 <!ø::paste("$$", "{left}")					;alt ø til ligning i linje (virker i obsidian)
 <!'::paste("\begin{align}\end{align}", "{left 11}{enter 2}{left}")	;alt ' til align ligning
@@ -281,7 +296,7 @@ SetWorkingDir %A_ScriptDir%
 +^æ::pasteAroundSelected("$", "$")		;sætter $ omkring markeret
 +^ø::pasteAroundSelected("$$", "$$")	;sætter $$ omkring markeret
 <!space::menupaste("Hurtig ligning: $[1]$", "$【1】$", "ligninger")
-;mellemrum i matematik felter
+;--- mellemrum i matematik felter ---
 <^>!space::paste("\ ")					;lave rigtige mellemrum i matematik felt
 >^space::paste("\quad ")					;laver næst størst mellemrum i mateamtik felt
 <^>!>^space::paste("\qquad ")				;laver størst mellemrum i matematik felt
@@ -289,19 +304,21 @@ SetWorkingDir %A_ScriptDir%
 >^,::paste(",\quad ")					;laver comma+næst størst mellemrum i mateamtik felt
 <^>!>^,::paste(",\qquad ")				;laver comma+størst mellemrum i matematik felt
 <^space::send, {end}{space}				;mellemrum til sidst i linjen
-;enters i LaTeX
+;--- enters i LaTeX ---
 <^>!enter::paste("\\","{enter}")			;Ordenligt nylinje i latex
 <^>!>^enter::send, {end}\\{enter}			;Forlad linje med \\
-;andet
+;--- andet ---
 <^>!.::send, {end}.\\{enter}	;punktum til sids<t på linje, ny linje
+>+-::paste("_{}","{left}")				;højreshift minus = subscrit med tuborg klap
 
 
-;venstre alt venstre kontrol + tal til headings
+;----- Heading -----
+;--- venstre alt venstre kontrol + tal til headings ---
 <!<^1::paste("\section*{}","{left}")	
 <!<^2::paste("\subsection*{}", "{left}")
 <!<^3::paste("\subsubsection*{}","{left}")
 <!<^4::paste("\paragraph{}","{left}")
-;andre heading shortcuts
+;--- andre heading shortcuts ---
 :*?X:\date::paste("\section*{" . date() . "}")			;skriver automatisk dagens dato
 :*?X:\def::paste("\subsubsection*{Definition }", "{left}") 
 :*?X:\sæt::paste("\subsubsection*{Sætning }", "{left}")
@@ -317,7 +334,18 @@ SetWorkingDir %A_ScriptDir%
 :*?X:\opg::paste("\subsection*{Opgaver}")
 :*?X:\stdop::paste("\subsubsection*{Standard opgave }", "{left}")
 
-;mere komplicerede alt makroer
+
+;----- mere komplicerede alt makroer der krævede flere linjer kode -----
+;<!w::run, www.wolframalpha.com	;work in progress. Gad godt kunne paste tekst ind i wolfram alpha søgefeltet
+<+<!w::
+string := getSelected()
+run, www.wolframalpha.com	;work in progress. Gad godt kunne paste tekst ind i wolfram alpha søgefeltet
+WinWait, Wolfram|Alpha
+sleep, 500
+paste(string, "{enter}")
+return
+
+
 <!-::	;alt - for bogstav efterfulgt af underscore  text
 ;text := input("Tekst over ting før mellemrum")
 input, text, L2
@@ -359,6 +387,7 @@ if WinExist("Madsbot: Madstrix") {			;Hvis allerede åben
 		WinActivate, Madsbot: Madstrix	;fokuser på vindue
 	return							;Lav værd med at lave ny (kan chrashe)
 }
+;---loader matrice formater---
 matrixformats := [new MatrixFormat("( )", "\begin{pmatrix}`n", "&", "\\`n", "`n\end{pmatrix}")
 , new MatrixFormat("[ ]", "\begin{bmatrix}`n", "&", "\\`n", "`n\end{bmatrix}")
 , new MatrixFormat("{ }", "\begin{Bmatrix}`n", "&", "\\`n", "`n\end{Bmatrix}")
@@ -368,39 +397,44 @@ matrixformats := [new MatrixFormat("( )", "\begin{pmatrix}`n", "&", "\\`n", "`n\
 , new MatrixFormat("ary", "\left(\begin{array}{}`n", "&", "\\`n", "\end{array}\right)")
 , new MatrixFormat("wα", "{{" , "," , "},{", "}}")
 , new MatrixFormat(chr(127809), "<<", "|", ">,<", ">>")]	;chr(127809) er symbolet for et maple leaf. Det rå unicode symbol chrashede min IDE
-matrixformats_n := matrixformats.length()
-matrixinputrows := matrixformats.length()-1.25
-pasteModes := ""
-for i, m in matrixformats {
-	pasteModes .= m.name . "|"
+;---Laver diverse variabler gui'en skal bruge---
+matrixformats_n := matrixformats.length()		;Kan ikke referere til en funktion i visse gui variabel referancer
+matrixinputrows := matrixformats.length()-1.25	;En tand mindre end den anden for at det er pænt
+pasteModes := ""	
+for i, m in matrixformats {		;looper igennem matriceformaterne og laver en streng der kan loades i listboksen i guien
+	pasteModes .= m.name . "|"	;Matrice formaterne sepereres med | for at få ny linje i listboksen
 }	StringTrimRight, pasteModes, pasteModes, 1	;fjerner sidste | i pastemodes
-matricer := ""
-Loop, %matrixformats_n% {
-	iniread, download, Data\savedata.ini, matrix, %A_Index%
-	matrix := StrReplace(download, "Æ", " ")
-	matricer .= matrix . "|"				;skift den her ud med et andet bogstav når den gemmes?‽‽‽‽‽!
-	NumberOfMatrices := A_Index
-}  	StringTrimRight, matricer, matricer, 1	;fjerner sidste |
-iniread, defaultFormat, Data\savedata.ini, matrix, LastFormat
+matricer := ""	
+Loop, %matrixformats_n% {		;Looper igennem saveslotsne i gui'en og loader gemte matricer
+	iniread, download, Data\savedata.ini, matrix, %A_Index%	;loadr matrice
+	matrix := StrReplace(download, "Æ", " ")	;Matricerne var gemt med Æ istedet for mellemrum til at overkomme .ini begrænsninger
+	matricer .= matrix . "|"					;Tilføjer | for at lave ny linje i listboksen
+}  	StringTrimRight, matricer, matricer, 1		;fjerner sidste | fra strengen
+iniread, defaultFormat, Data\savedata.ini, matrix, LastFormat	;Loader det sidste brugte matrix format
 if (defaultFormat<1 or defaultFormat>matrixformats.length())	;hvis der gik noget galt i at loade default format
 	defaultFormat := 1									;sæt det til 1.
-
-gui_height := matrixformats_n*30+8
-gui, MatrixMaker:new, +HwndGuiHwnd +ToolWindow, Madsbot: Madstrix	;always on top
-gui, MatrixMaker:Default
+;---Laver GUI---
+gui, MatrixMaker:new, +HwndGuiHwnd +ToolWindow, Madsbot: Madstrix	;laver vindue med indstillinger
+gui, MatrixMaker:Default		;Sætter til default så jeg ikke skal nævne den i hver kommando
+gui, margin, 0, 0			;Sætter margins til 0, så vinduestørelsen ikke skal hardcodes. 
 gui, font, s20
-gui, show, xcenter ycenter w600 h%gui_height%
+;laver gui elementer
 gui, add, Edit, x0 y0 w300 r%matrixinputrows% vMatrixInput
-gui, add, button, x0 y+0 wp-108 h36 vMatrixButton gCreateMatrix, Insert Matrix
-gui, add, button, x+0 yp w68 h36 vMatrixHelpButton gMatrixHelp, Help
-gui, add, comboBox, x+0 yp w40 h32 vMatrixSaveSlot Choose1, 1|2|3|4|5|6|7|8|9
+gui, add, button, x0 y+0 wp-108 h32 vMatrixButton gCreateMatrix, Insert Matrix
+gui, add, button, x+0 yp w68 hp vMatrixHelpButton gMatrixHelp, Help
+gui, font, s18		;fontet skal være en tand mindre for at næste ikke bliver for høj
+gui, add, comboBox, x+0 yp w40 hp vMatrixSaveSlot Choose1, 1|2|3|4|5|6|7|8|9
+gui, font, s20
 gui, add, listbox, x300 y0 w260 r%matrixformats_n% vMatrixSelector gMatrixChangeInput, %matricer%
 gui, add, listbox, x560 y0 w40 r%matrixformats_n% vMatrixPasteMode Choose%defaultFormat%, %pasteModes%
-funcObject1 := func("MatrixLoadNext").bind(GuiHwnd)
-funcObject2 := func("MatrixLoadPrevios").bind(GuiHwnd)
-funcObject3 := func("MatrixNextFormat").bind(GuiHwnd)	;referance til select nedad i ListBox
-funcObject4 := func("MatrixPreviousFormat").bind(GuiHwnd)		;referance til select opad i listbox
-hotkey, IfWinActive, Madsbot: Madstrix			;gør knapper kun virker hvis vindue aktivt
+guicontrol, Focus, MatrixInput
+gui, show, xcenter ycenter
+;---Laver hotkeys---
+funcObject1 := func("MatrixLoadNext").bind(GuiHwnd)		;Laver funktionsobjekter som hotkeysne kalder
+funcObject2 := func("MatrixLoadPrevios").bind(GuiHwnd)		;Men en referance til gui'en
+funcObject3 := func("MatrixNextFormat").bind(GuiHwnd)		;Så de f.eks kan lukke vinduet bagefter
+funcObject4 := func("MatrixPreviousFormat").bind(GuiHwnd)
+hotkey, IfWinActive, Madsbot: Madstrix			;gør hotkeys kun aktive hvis vindue aktivt
 hotkey, ^enter, CreateMatrix, on
 hotkey, escape, ExitMatrixMaker, on
 hotkey, ^down, % funcObject1, on
@@ -408,12 +442,12 @@ hotkey ^up, % funcObject2, On
 hotkey, ^right, % funcObject3, On
 hotkey, ^left, % funcObject4, On
 loop, % min(9, matrixformats_n) {	;looper igennem hver gemt matrix. Højst til 9, da der er ni talknapper på tastaturet
-	funcObject := func("MatrixSetSaveSlot").bind(A_index, GuiHwnd)
-	hotkey, ^%A_index%, % funcObject, on
+	funcObject := func("MatrixSetSaveSlot").bind(A_index, GuiHwnd)	;Laver funktionsobjekt der sætter saveslot til talknap
+	hotkey, ^%A_index%, % funcObject, on						;Binder talknap til funktionsobjektet
 }
-guicontrol, Focus, MatrixInput
 return
 
+;----- Funktioner -----
 paste(text, send := "") {	; has a second optional argument for any text to send. 
 	sleep, 100
 	sendinput, {text}%text%
@@ -468,34 +502,37 @@ paste(text, send := "") {	; has a second optional argument for any text to send.
 } 
 
 MenuPaste(titel, text, savesektion:="") {
-	global GemtSelector
+	global GemtSelector				;skal være global da funktioner skal hente den. Kan ikke sendes pga ahk begrænsninger
 	if WinExist(titel) {			;Hvis allerede åben
 		if !winactive(titel)		;Hvis ikke aktive vindue
 			WinActivate, % titel 	;fokuser på vindue
 		return					;Lav værd med at lave ny (kan chrashe)
 	}
+	
+	StringTrimRight, gemt, gemt, 1	;fjerner sidste | som splitter dem op
 	gui, new, +HwndGuiHwnd +AlwaysOnTop +ToolWindow, %titel%	;laver gui	+Hwnd laver guis HWND til handle
 	gui, %GuiHwnd%:Default				;sætter til default for thread
-	gui, show, xcenter ycenter w256 h256	;Viser vindue
+	gui, margin, 0, 0			;Sætter margins til 0, så vinduestørelsen ikke skal hardcodes. 
 	gui, font, s16						;Sætter font
 	gui, add, Edit, x0 y0 w256 r2 vInput, 	;laver edit boks med en row
 	gui, font, s12
 	guicontrol, Focus, Input				;Fokusere på inputboksen
-	iniread, saveslot, Data\savedata.ini, %savesektion%, currentSaveSlot	;loader saveslot
-	
-	slots := 10
-	if (saveslot="ERROR")
-		saveslot := -1 
-	saveslot := mod(saveslot+1, slots)	;bruger næste saveslot
-	gemt := ""
-	Loop, %slots% {				;laver listen med gamle inputs
-		iniread, download, Data\savedata.ini, %savesektion%, % mod(slots+saveslot-(A_Index), slots)
-		gemt .= download . "|"
+	if savesektion {					;Hvis en savesection var angivet, load gamle ting ind og lav boks (hvilket gør vindue størrer)
+		iniread, saveslot, Data\savedata.ini, %savesektion%, currentSaveSlot	;loader saveslot
+		slots := 10
+		if (saveslot="ERROR")
+			saveslot := -1 
+		saveslot := mod(saveslot+1, slots)	;bruger næste saveslot
+		gemt := ""
+		Loop, %slots% {				;laver listen med gamle inputs
+			iniread, download, Data\savedata.ini, %savesektion%, % mod(slots+saveslot-(A_Index), slots)
+			gemt .= download . "|"
+		}
+		gui, add, Listbox, x0 y54 w256 r%slots% vGemtSelector ReadOnly, %gemt%	;laver listboksen med gamle inputs
+		UpdateField := func("MenuPasteUpdateField").bind(GuiHwnd)		;laver funktionsrefereance til opdater field
+		Guicontrol, +g, GemtSelector, % UpdateField					;binder funktions referance til listboksen
 	}
-	StringTrimRight, gemt, gemt, 1	;fjerner sidste | som splitter dem op
-	gui, add, Listbox, x0 y54 w256 r%slots% vGemtSelector ReadOnly, %gemt%	;laver listboksen med gamle inputs
-	UpdateField := func("MenuPasteUpdateField").bind(GuiHwnd)		;laver funktionsrefereance til opdater field
-	Guicontrol, +g, GemtSelector, % UpdateField					;binder funktions referance til listboksen
+	gui, show, xcenter ycenter	;Viser vindue
 	
 	funcObject1 := func("MenuPasteSplitSend").bind(GuiHwnd, text, savesektion, saveslot, mod(saveslot-1, slots))	;referance til send funktion
 	funcObject2 := func("MenuPasteExit").bind(GuiHwnd)		;referance til luk funktion
@@ -584,8 +621,6 @@ SelectionMenu(list, titel) {
 	msgbox, Vælg teksten der skal sendes ved at klikke på knappen eller dens korsponderende tast på tastaturet som står neden under.
 }
 
-;gui, add, button, x0 y+0 wp-40 h36 vMatrixButton gCreateMatrix, Insert Matrix
-
 Class MatrixFormat {
 	__New(name, before, spaceSeperator, enterSeperator, after)
 	{
@@ -635,7 +670,6 @@ if !FileExist("Data\savedata.ini")	{		; findes fill ikke
 }
 if instr(upload, "|") {
 	msgbox, Der er | i din matrix, hvilket ødelægger alt. Det er besværligt at fikse, derfor gemmes den ikke :(
-	
 	return
 }
 ;sanitiezedUpload := StrReplace(upload, "|", "｜") 		;| ødelægger *ting* så udskiftes med en lidt anden vertical linje
