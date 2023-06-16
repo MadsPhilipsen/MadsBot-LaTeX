@@ -3,11 +3,16 @@
 SetWorkingDir %A_ScriptDir%
 #InputLevel 10			;super vigigt. Gør at ^å som mapper til \ kan aktivere andre makroer
 
+;Menu, Tray, Icon, Resources\icon.ico
+Menu, Tray, Add  ; Creates a separator line.
+Menu, Tray, Add, Github, TrayGithub ; Creates a new menu item.
+
+
 /*	Madsbot LaTeX af Mads Philipsen
-	
+	------------------------------
 	Altgr=græske bogstaver
 	Altgr+shift=store græske bogstaver
-	Altgr+piletaster (evt + højre eller venstreshift)=medførepile
+	Altgr+piletaster=medførepile
 	højrekontrol+højreshift=matematik symboler
 	højrekontrol+venstreshift=alternative matematiksymboler
 	højrekontrol+piletaster (evt + højre eller venstreshift)=pile og pile agtige symboler
@@ -48,8 +53,11 @@ SetWorkingDir %A_ScriptDir%
 >^<+i::SelectionMenu(["∫","∬","∭","⨌","∮","∯","∰","⨍","⨎","⨏","⨐","∱","⨑","∲","∳","⨒","⨓","⨔","⨕","⨖","⨗","⨘","⨙","⨚","⨛","⨜","⨋","⌠","⌡"], "Integral symboler")
 >^>+f::¬	;not 
 >^>+k::∘	;sammensat funrktion 	(k for kombineret)
+;>^<+k::SelectionMenu(["●","◖","◗","■","◆","▰","▲","◀","▶","◢","◣","◤","◥","○","□","◇","▱","△","◁","▷","◿","◺","◸","◹","◐","◑","◒","◓","◔","◕","◧","◨","◩","◪","◫","◭","◮","◰","◱","◲","◳","◴","◵","◶","◷"],"kanter")
+>^<+k::SelectionMenu(["●","◖","◗","■","◆","▰","▲","◀","▶","◢","◣","◤","◥","○","□","◇","▱","△","◁","▷","◿","◺","◸","◹","◐","◑","◒","◓","◔","◕","◧","◨","◩","◪","◫","◭","◮","◴","◵","◶","◷"],"kant symboler")
 >^>+d::∂	;blødt d
 >^>+l::ℓ	;matematik l
+>^<+l::SelectionMenu(["∧","∨","⟹","⟸"],"logik symboler")
 >^>+8::∞	;uendelig
 >^<+u::SelectionMenu(["∞","⧜","⧝","⧞","♾","ℵ"], "Den uendelige liste")
 >^>+g::∇	;nabla 				(g for gradient)
@@ -57,6 +65,7 @@ SetWorkingDir %A_ScriptDir%
 >^<+t::✓	;tjekmark
 >^>+h::̂ 	;hat over bogstav
 >^>+b::̅ 	;bar over bogstav
+>^<+a::SelectionMenu(["←","→","↔","↤","↦","⟵","⟶","⟷","⟻","⟼","↚","↛","↮","⇜","⇝","↭","⇷","⇸","⇹","⬳","⟿","⬸","⤑","⬰","⇴","⥈","⬾","⥇","⬲","⟴","⇇","⇉","⇆","⇄","⬱","⇶"],"Pile") ;https://latex-tutorial.com/arrow-latex/
 >^>+o::⊗	;cirkel med kryds
 >^<+o::SelectionMenu(["⊕","⊖","⊗","⊘","⊙","⊚","⊛","⊝","○","◌","◍","◎","◉","⨶","⨷","⨸","⌀","ø","∅","◦","°","○"],"Cirkel symboler")
 ;>^>+ø::∅	;tomme mængde
@@ -71,23 +80,12 @@ SetWorkingDir %A_ScriptDir%
 >^<++::SelectionMenu(["+","±","∓","⩱","⩲","∑","⨊","⨋","⨁","⊞","⨹","⧺","⧻","⎲","⎳"], "Plus menu")
 >^<+.::SelectionMenu(["⋯","⋱","⋮","⋰","⋅","∶","∴","∵","∷","⦁","●"], "Prikker")
 
-
-
 ;----- Pile taster -----
-;altgr+pile taster = impliaktions pile. Højre og venstre shift giver modifikationer
+;altgr+pile taster = impliaktions pile
 <^>!right::⟹ 		;lang højre implikation
 <^>!left::⟸ 		;lang venstre implikation
 <^>!up::⟺ 		;lang biimplikation
 <^>!down::⇏		;Ikke implikation
-;<^>!down::⇔ 		;kort biimplikation
-;<^>!>+right::⇒		;kort højre implikaiton
-;<^>!>+left::⇐		;kort venstre implikaiton
-;<^>!>+up::⇑		;kort opad implikaiton
-;<^>!>+down::⇓		;kort nedad implikaiton
-;<^>!<+right::⇏		;kort højre ikke implikaiton
-;<^>!<+left::⇍		;kort venstre ikke implikaiton
-;<^>!<+up::⇎		;kort ikke biimplikaiton
-;<^>!<+down::⇕		;kort opad biimplikaiton
 ;rightcontrol med højre/venstreshift piletaster
 >^>+right::→		;højre pil
 >^>+left::←		;venstrepil
@@ -161,8 +159,6 @@ SetWorkingDir %A_ScriptDir%
 ;Diverse matematiske hotstrings. 
 :*?:<=::≤
 :*?:=<::≤
-;:*?::=::≔
-;:*?:=:::≕
 :*?:>=::≥
 :*?:=>::≥
 :*?:/<::≮		;ikke mindre end
@@ -271,18 +267,13 @@ SetWorkingDir %A_ScriptDir%
 <^<!c::paste("\begin{cases}\end{cases}", "{left 11}{enter 2}{left}")
 <!c::paste("\begin{cases}\end{cases}", "{left 11}{enter 2}{left}")
 <+<!c::selected := getSelected(), paste("\begin{cases}" . selected . "\end{cases}", "{left " . 11+StrLen(selected) . "}{enter}{right " . StrLen(selected) . "}\\{enter 2}{left}")
-
-;--- andet ---
-<!f::menupaste("Følgens navn: [1] i indekset [2] som ligger i [3]", "\{【1】_{【2】}\}_{【2】∈【3】}", "følger")	;alt f = m
-<!a::paste("^*")						;Adjungeret
-<!<::paste("⌊⌋", "{left}")				;gulv
-<!<+<::paste("⌈⌉", "{left}")				;lfot
-<!1::paste("^{-1}") 					;alt 1 = invers
-<!<+1::pasteAroundSelected("\frac{1}{","}")
-<!2::paste("\sqrt{}", "{left}")			;alt 2 = √
-<!3::menupaste("[1]'te rod af [2]","\sqrt[【1】]{【2】}", "nroot")			;alt 3 = n rod, hvor jeg kan ændre n. 
-<!0::paste("\{0\}")						;alt 0 = singleton 0
-;<!u::paste("⋃_{}^{}{}","{left 6}")			;alt u = fællesmængde med interval
+;- w = wolframalpha -
+<^<!w::run, www.wolframalpha.com
+<!w::
+inputbox, var
+wolframalpha(var)
+return
+<+<!w::wolframalpha(StrReplace(getSelected(), "$"))
 
 
 ;----- Navigation -----
@@ -293,6 +284,7 @@ SetWorkingDir %A_ScriptDir%
 <!<+'::pasteAroundSelected("\begin{align}","\end{align}")
 <^>!ø::send, {end}{enter}$$$${left 2}	;til programmer der ikke automatisk sætter to $
 <^>!æ::send, {end}{enter}$$			;til programmer der automatisk sætter to $
+<^>!å::send, $$					;double $$ i programer der autosmatiks sætter $
 +^æ::pasteAroundSelected("$", "$")		;sætter $ omkring markeret
 +^ø::pasteAroundSelected("$$", "$$")	;sætter $$ omkring markeret
 <!space::menupaste("Hurtig ligning: $[1]$", "$【1】$", "ligninger")
@@ -315,11 +307,15 @@ SetWorkingDir %A_ScriptDir%
 ;----- Heading -----
 ;--- venstre alt venstre kontrol + tal til headings ---
 <!<^1::paste("\section*{}","{left}")	
+;<!<+1::pasteAroundSelected("\section*{","}")
 <!<^2::paste("\subsection*{}", "{left}")
+;<!<+2::pasteAroundSelected("\subsection*{","}")
 <!<^3::paste("\subsubsection*{}","{left}")
+;<!<+3::pasteAroundSelected("\subsubsection*{","}")
 <!<^4::paste("\paragraph{}","{left}")
+;<!<+4::pasteAroundSelected("\paragraph{","}")
 ;--- andre heading shortcuts ---
-:*?X:\date::paste("\section*{" . date() . "}")			;skriver automatisk dagens dato
+:*?X:\dato::paste("\section*{" . date() . "}")			;skriver automatisk dagens dato
 :*?X:\def::paste("\subsubsection*{Definition }", "{left}") 
 :*?X:\sæt::paste("\subsubsection*{Sætning }", "{left}")
 :*?X:\kor::paste("\subsubsection*{Korollar }", "{left}")
@@ -334,18 +330,22 @@ SetWorkingDir %A_ScriptDir%
 :*?X:\opg::paste("\subsection*{Opgaver}")
 :*?X:\stdop::paste("\subsubsection*{Standard opgave }", "{left}")
 
+;--- andet ---
+<!f::menupaste("Følgens navn: [1] i indekset [2] som ligger i [3]", "\{【1】_{【2】}\}_{【2】∈【3】}", "følger")	;alt f = m
+<!a::paste("^*")						;Adjungeret
+<!<::paste("⌊⌋", "{left}")				;gulv
+<!<+<::paste("⌈⌉", "{left}")				;lfot
+<!1::paste("^{-1}") 					;alt 1 = invers
+<!<+1::pasteAroundSelected("\frac{1}{","}")
+<!2::paste("\sqrt{}", "{left}")			;alt 2 = √
+<!<+2::pasteAroundSelected("\sqrt{","}")
+<!3::menupaste("[1]'te rod af [2]","\sqrt[【1】]{【2】}", "nroot")			;alt 3 = n rod, hvor jeg kan ændre n.
+<!<+3::menupaste("[1]'te rod af markeret'","\sqrt[【1】]{" . getSelected() . "}")
+<!0::paste("\{0\}")						;alt 0 = singleton 0
+;<!u::paste("⋃_{}^{}{}","{left 6}")			;alt u = fællesmængde med interval
+
 
 ;----- mere komplicerede alt makroer der krævede flere linjer kode -----
-;<!w::run, www.wolframalpha.com	;work in progress. Gad godt kunne paste tekst ind i wolfram alpha søgefeltet
-<+<!w::
-string := getSelected()
-run, www.wolframalpha.com	;work in progress. Gad godt kunne paste tekst ind i wolfram alpha søgefeltet
-WinWait, Wolfram|Alpha
-sleep, 500
-paste(string, "{enter}")
-return
-
-
 <!-::	;alt - for bogstav efterfulgt af underscore  text
 ;text := input("Tekst over ting før mellemrum")
 input, text, L2
@@ -428,7 +428,9 @@ gui, font, s20
 gui, add, listbox, x300 y0 w260 r%matrixformats_n% vMatrixSelector gMatrixChangeInput, %matricer%
 gui, add, listbox, x560 y0 w40 r%matrixformats_n% vMatrixPasteMode Choose%defaultFormat%, %pasteModes%
 guicontrol, Focus, MatrixInput
-gui, show, xcenter ycenter
+;gui, show, xcenter ycenter
+gui, show, x0 y0
+groupadd, menus, ahk_id %GuiHwnd%	;tilføer til menuer så andre vinduer kan placeres relativt
 ;---Laver hotkeys---
 funcObject1 := func("MatrixLoadNext").bind(GuiHwnd)		;Laver funktionsobjekter som hotkeysne kalder
 funcObject2 := func("MatrixLoadPrevios").bind(GuiHwnd)		;Men en referance til gui'en
@@ -449,7 +451,7 @@ return
 
 ;----- Funktioner -----
 paste(text, send := "") {	; has a second optional argument for any text to send. 
-	sleep, 100
+	;sleep, 100
 	sendinput, {text}%text%
 	if send
 		send, % send
@@ -503,18 +505,18 @@ paste(text, send := "") {	; has a second optional argument for any text to send.
 
 MenuPaste(titel, text, savesektion:="") {
 	global GemtSelector				;skal være global da funktioner skal hente den. Kan ikke sendes pga ahk begrænsninger
-	if WinExist(titel) {			;Hvis allerede åben
-		if !winactive(titel)		;Hvis ikke aktive vindue
-			WinActivate, % titel 	;fokuser på vindue
-		return					;Lav værd med at lave ny (kan chrashe)
+	if WinExist(titel) and !winactive(titel) {	;Hvis allerede åben og  ikke aktivt vindue
+		WinActivate, % titel 				;fokuser på vindue
+		return							;return så den ikke laver nyt vindue
 	}
 	
-	StringTrimRight, gemt, gemt, 1	;fjerner sidste | som splitter dem op
+	width := 251
+	
 	gui, new, +HwndGuiHwnd +AlwaysOnTop +ToolWindow, %titel%	;laver gui	+Hwnd laver guis HWND til handle
 	gui, %GuiHwnd%:Default				;sætter til default for thread
 	gui, margin, 0, 0			;Sætter margins til 0, så vinduestørelsen ikke skal hardcodes. 
 	gui, font, s16						;Sætter font
-	gui, add, Edit, x0 y0 w256 r2 vInput, 	;laver edit boks med en row
+	gui, add, Edit, x0 y0 w%width% r2 vInput, 	;laver edit boks med en row
 	gui, font, s12
 	guicontrol, Focus, Input				;Fokusere på inputboksen
 	if savesektion {					;Hvis en savesection var angivet, load gamle ting ind og lav boks (hvilket gør vindue størrer)
@@ -528,18 +530,29 @@ MenuPaste(titel, text, savesektion:="") {
 			iniread, download, Data\savedata.ini, %savesektion%, % mod(slots+saveslot-(A_Index), slots)
 			gemt .= download . "|"
 		}
-		gui, add, Listbox, x0 y54 w256 r%slots% vGemtSelector ReadOnly, %gemt%	;laver listboksen med gamle inputs
+		gui, add, Listbox, x0 y54 w%width% r%slots% vGemtSelector ReadOnly, %gemt%	;laver listboksen med gamle inputs
 		UpdateField := func("MenuPasteUpdateField").bind(GuiHwnd)		;laver funktionsrefereance til opdater field
 		Guicontrol, +g, GemtSelector, % UpdateField					;binder funktions referance til listboksen
 	}
-	gui, show, xcenter ycenter	;Viser vindue
+	;--- viser vindue ---
+	try {	;prøv at placere vindue ud fra eksistererne vindue
+		wingetpos, x, y, w, h, ahk_group menus
+		newx := x+w
+		newy := y
+		if (newx+w>=A_ScreenWidth)
+			newy += h, newx := 0
+		gui, show, x%newx% y%newy%	;Viser vindue
+	} Catch {	;Hvis det ikke kunne lade sig gøre, placer where efter
+		gui, show, x0 y0	;Viser vindue
+	}
+	groupadd, menus, %titel%
 	
 	funcObject1 := func("MenuPasteSplitSend").bind(GuiHwnd, text, savesektion, saveslot, mod(saveslot-1, slots))	;referance til send funktion
 	funcObject2 := func("MenuPasteExit").bind(GuiHwnd)		;referance til luk funktion
 	funcObject3 := func("MenuPasteSelectDown").bind(GuiHwnd)	;referance til select nedad i ListBox
 	funcObject4 := func("MenuPasteSelectUp").bind(GuiHwnd)		;referance til select opad i listbox
 	
-	hotkey, IfWinActive, %titel%			;gør knapper kun virker hvis vindue aktivt
+	hotkey, IfWinActive, ahk_id %GuiHwnd%			;gør knapper kun virker hvis vindue aktivt
 	hotkey, enter, % funcObject1, on		;enter til at sende ting og lukke vindue
 	hotkey, escape, % funcObject2, on		;escape til at lukke vindue.
 	hotkey, down, % funcObject3, on		;pil ned til select nedad i listbox
@@ -550,11 +563,7 @@ MenuPaste(titel, text, savesektion:="") {
 	gui, %gui%:submit		;gemmer indenhold i input variablen
 	RegExReplace(text, "【",, count)		;tæller hvor mange led der er i teksten, så ekstra tring kan gå i sidste led
 	list := StrSplit(Input, " ",,count)	;splits string i det antal led der skal være, hvor sidste lad kan indenholde mellemrum. 
-	hotkey, enter, off		;disables hotkey 
-	hotkey, escape, off		
-	hotkey, down, off
-	hotkey, up, off
-	gui, cancel			;close gui
+	MenuPasteExit(gui)
 	for n, val in List 		;opdatere text indenholdet til at indenholde inputtet
 		text := StrReplace(text, "【" n "】", val)	;bruger skøre brackets for at undgå konflikter med brugs situationer
 	text := RegExReplace(text, "【(.*?)*】",, -1)		;fjerner ekstra 【n】 som ikke blev udfyldt, hvis de findes
@@ -568,12 +577,16 @@ MenuPaste(titel, text, savesektion:="") {
 		}
 	}
 } MenuPasteExit(gui) {
-	hotkey, enter, off		;disables hotkey
-	hotkey, escape, off		
-	hotkey, down, off
-	hotkey, up, off
-	gui, %gui%:cancel		;close gui
-	Exit					;lukker thread
+	try, hotkey, enter, off		;disables hotkey
+	try, hotkey, escape, off		
+	try, hotkey, down, off
+	try, hotkey, up, off
+	try, gui, %gui%:cancel		;close gui
+	;--- kode der sikre at man ikke fokusere på et mærkeligt vindue når der er andre menuer åbne ---
+	winget, tempid1, id, A		;aktivt vindue ID
+	winget, Tempid2, id, % "ahk_id " . tempid1 . " ahk_group menus"	;laver id hvis aktivt vindue er en menu
+	if !Tempid2				;Hvis aktivt vindue ikke er en menu
+		GroupActivate, menus, R	;prøv at lave aktivt vindue til en mebu
 } MenuPasteUpdateField(gui) {
 	global GemtSelector			;Gør den kan hente inputtet i tekstboksen
 	gui, %gui%:submit, nohide	;gemmer indenhold i input variablen
@@ -586,6 +599,9 @@ MenuPaste(titel, text, savesektion:="") {
 }
 
 SelectionMenu(list, titel) {
+	Groupclose, SelectionMenus			;Lukker alle andre selectionMenu'er
+	Groupadd, SelectionMenus, %titel%		;Tilføjer denne menu til Selectionmenus så den kan lukkes med linjen over hvis en ande åbnes
+	
 	gui, new, +HwndGuiHwnd +AlwaysOnTop +ToolWindow, %titel%	;laver gui	+Hwnd laver guis HWND til handle
 	gui, %GuiHwnd%:Default				;sætter til default for thread
 	gui, margin, 0, 0
@@ -647,6 +663,13 @@ formatMatrix(input, before, spaceSeperator, enterSeperator, after) {
 			text .= enterSeperator			;tilføj enterseperatoren
 	}
 	return, before . text . after
+}
+
+wolframalpha(text) {
+	run, www.wolframalpha.com	;work in progress. Gad godt kunne paste tekst ind i wolfram alpha søgefeltet
+	WinWait, Wolfram|Alpha
+	sleep, 500
+	paste(text, "{enter}")
 }
 
 return				;matrix  subrutiner
@@ -718,4 +741,10 @@ MatrixDisableHotkeys() {
 } MatrixPreviousFormat(gui) {
 	ControlSend, ListBox2, {up}, ahk_id %gui%	;send pil op til listbox kontrollen i gui
 }
+
+;----- Tray handlers -----
+TrayGithub:
+run, "https://github.com/MadsPhilipsen/MadsBot-LaTeX/tree/main"
+return
+
 #if
