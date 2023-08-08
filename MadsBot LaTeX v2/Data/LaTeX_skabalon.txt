@@ -1,0 +1,22 @@
+\documentclass{article}
+
+\usepackage[mathletters]{ucs}
+\usepackage[utf8x]{inputenc}    %text encoder. uft8x instead of utf8 for more characters
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{tikz}           %Makes it posible o draw on pdf
+\usepackage{amsfonts}       %Translates ℝ and such
+\usepackage{pdfpages}
+
+\title{Titel}
+\author{Mads Philipsen, nbs958}
+\date{\today}
+
+\begin{document}
+\maketitle
+text
+
+
+
+\end{document}

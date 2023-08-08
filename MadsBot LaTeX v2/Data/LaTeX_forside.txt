@@ -1,0 +1,18 @@
+\thispagestyle{empty}
+\includepdf[pagecommand={
+    \begin{tikzpicture}[remember picture, overlay]
+    % \node (bogstav) at (x, y) - se papiret som et koordinatsystem
+    % Afleveringsopgave
+    \node (A) at (8.5, -3.2) {\huge 4}; % vi bruger \huge for at gøre teksten stor
+    % Dato
+    \node (C) at (2.5, -5.7) {\large 18/12/2022};
+    % Hold
+    \node (D) at (2.5, -8) {\huge 11};
+    % Studieretning
+    \node (D) at (5.2, -10.4) {\huge Matematik};
+    % Navn
+    \node (D) at (3.5, -12.9) {\huge Mads Philipsen};
+    % Fødelsdagsdato
+    \node (D) at (4.3, -13.9) {\Large 01/03/2002};
+    \end{tikzpicture}
+    }]{forside.pdf}
